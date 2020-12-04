@@ -1,0 +1,93 @@
+{% block content %}
+<div class="col-14">
+  <button type="button" class="btn btn-primary btn-sm btn-block js-create-hot-enq" style="margin-top: -13px;" data-url="{% url 'salesperson_enq_create' %}">Add New Enquiry</button>
+  <table class="table table-hover table-sm" id="table-hotenq" style="padding: 100px; font-size: small;">
+    <thead>
+      <tr>
+        <th>Query_id</th>
+        <th>Name</th>
+        <th>MOB</th>
+        <th>Email</th>
+        <th>Subject</th>
+        <th>MESSAGE</th>
+        <th>CITY</th>
+        <th>STATE</th>
+        <th>Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% include 'Salesperson_Dashboard/hot_list.htm' %}
+    </tbody>
+  </table>
+</div>
+<div class="modal fade" id="hotenq" tabindex="-1" aria-labelledby="hotenqLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+  $(function () {
+
+/* Functions */
+
+var loadForm = function () {
+  var btn = $(this);
+  $.ajax({
+    url: btn.attr("data-url"),
+    type: 'get',
+    dataType: 'json',
+    beforeSend: function () {
+      $("#hotenq .modal-content").html("");
+      $("#hotenq").modal("show");
+    },
+    success: function (data) {
+      $("#hotenq .modal-content").html(data.html_form);
+    }
+  });
+};
+
+var saveForm = function () {
+  var form = $(this);
+  $.ajax({
+    url: form.attr("action"),
+    data: form.serialize(),
+    type: form.attr("method"),
+    dataType: 'json',
+    success: function (data) {
+      if (data.form_is_valid) {
+        $("#table-hotenq tbody").html(data.html_enq_list);
+        $("#hotenq").modal("hide");
+      }
+      else {
+        $("#hotenq .modal-content").html(data.html_form);
+      }
+    }
+  });
+  return false;
+};
+
+/* Binding */
+
+// Create book
+$(".js-create-hot-enq").click(loadForm);
+$("#hotenq").on("submit", ".js-create-hot-enq-form", saveForm);
+
+// Update book
+$("#table-hotenq").on("click", ".js-update-enq", loadForm);
+$("#hotenq").on("submit", ".js-enq-update-form", saveForm);
+
+// Delete book
+$("#table-hotenq").on("click", ".js-delete-enq", loadForm);
+$("#hotenq").on("submit", ".js-enq-delete-form", saveForm);
+
+});
+
+</script>
+{% endblock %}

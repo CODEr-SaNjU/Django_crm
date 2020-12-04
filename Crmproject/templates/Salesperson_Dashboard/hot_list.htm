@@ -1,0 +1,39 @@
+{% for i in page_obj %}
+<tr style="color: black; font-weight: bold;">
+  <td>{{i.QUERY_ID}}</td>
+  <td>{{i.SENDERNAME}}</td>
+  <td>{{i.MOB}}</td>
+  <td>{{i.SENDEREMAIL|safe|truncatechars:"7"|linebreaks}}</td>
+  <td>{{i.SUBJECT|safe|truncatewords:"4"|linebreaks}}</td>
+  <td>{{i.ENQ_MESSAGE|safe|truncatewords:"4"|linebreaks}}</td>
+  <td>{{i.ENQ_CITY}}</td>
+  <td>{{i.ENQ_STATE|truncatechars:"8"|linebreaks}}</td>
+  <td>{{i.DATE_R}}</td>
+  <td>
+    <button type="button"  class="btn btn-warning btn-sm  js-update-enq" data-url="{% url 'salesperson_Enquiry_Update' i.id %}"><i class="fa fa-plus" aria-hidden="true"></i></button>
+    <button type="button"  class="btn btn-danger btn-sm  js-delete-enq"   data-url="{% url 'salesperson_Enquiry_Delete' i.id %}"><i class="fa fa-trash" aria-hidden="true"></i></button>
+  </td>
+</tr>
+{% empty %}
+<tr>
+  <td colspan="12" class="text-center bg-warning">No Enquiry Found</td>
+</tr>
+{% endfor %}
+
+<div class="pagination">
+  <span class="step-links" style="color: black;">
+      {% if page_obj.has_previous %}
+          <a href="?page=1" style="color: black; font-weight: bold;">&laquo; first</a>
+          <a href="?page={{ page_obj.previous_page_number }}" style="color: black; font-weight: bold;">previous</a>
+      {% endif %}
+
+      <span class="current">
+          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+      </span>
+
+      {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}" style="color: black; font-weight: bold;">next</a>
+          <a href="?page={{ page_obj.paginator.num_pages }}" style="color: black; font-weight: bold;">last &raquo;</a>
+      {% endif %}
+  </span>
+</div>

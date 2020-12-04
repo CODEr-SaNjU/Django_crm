@@ -1,0 +1,17 @@
+{%for all_user in all_user %}
+<tr style="color: black; font-weight: bold;"> 
+  <td>{{all_user.first_name}}</td>
+  <td>{{all_user.username}}</td>
+  <td>{{all_user.email}}</td>
+  <td>Salesperson</td>
+  <td>
+    <button type="button"  class="btn btn-warning js-update-user" data-url="{% url 'user_update' all_user.id %}"><i class="fa fa-plus" aria-hidden="true"></i></button>
+    <button type="button"  class="btn btn-danger js-delete-user"   data-url="{% url 'user_delete' all_user.id %}"><i class="fa fa-trash" aria-hidden="true"></i></button>
+  </td>
+
+</tr>
+{% empty %}
+<tr>
+  <td colspan="12" class="text-center bg-warning">No Users Found</td>
+</tr>
+{% endfor %}
