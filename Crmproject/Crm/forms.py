@@ -1,9 +1,9 @@
 from django import forms
-from .models import CK_Account
+from .models import Enquiry
 from django.contrib.auth.models import User
 
 from django.http import Http404, HttpResponse
-
+from django.contrib.auth.forms import UserCreationForm
 
 class UserForm(UserCreationForm):
     class Meta:

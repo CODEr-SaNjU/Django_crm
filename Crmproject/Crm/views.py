@@ -23,7 +23,7 @@ import requests
 from django.db.models import Q
 import json
 from django.urls import reverse_lazy
-from .models import CK_Account
+from .models import Enquiry
 import datetime
 from django.core.paginator import PageNotAnInteger,EmptyPage,Paginator
 from django.template.loader import render_to_string
