@@ -20,6 +20,7 @@
                             <div class="brand_logo_container">
                                 <!-- <img src="{% static "image/logo.png" %}" class="brand_logo col-sm-18 col-md-17 col-lg-12 mx-auto" alt="Logo"> -->
                             </div>
+                            <div class=" div  text-center" >Login page icone here</div>
                         </div>
                         <form action="" method="POST" class="form-signin">
                             {% csrf_token %}
@@ -46,12 +47,12 @@
                                 <input type="password" id="inputPassword" class="form-control" placeholder="Password" name="password"  autocomplete="off" required>
                                 <label for="inputPassword">Password</label>
                             </div>
-                            <button class="btn btn-lg  btn-block text-uppercase"  type="submit">Sign in</button>
-                            <button class="btn btn-lg  btn-block text-uppercase"  type="reset">Cancel</button>
+                            <button class="btn btn-lg  btn-block text-uppercase" id="btn-sign"   type="submit">Sign in</button>
+                            <button class="btn btn-lg  btn-block text-uppercase" id="btn-cancel"  type="reset">Cancel</button>
                             <hr class="my-4">
                             <div class="mt-4">
                                 <div class="d-flex justify-content-center links">
-                                    Don't have an account? <a class="forgetpassword" href="#" class="ml-2">Contact to admin</a>
+                                    Don't have an account? <a class="forgetpassword" href="#" style="color: blue;" class="ml-2">Contact to admin</a>
                                 </div>
                             </div>
                         </form>
@@ -60,7 +61,6 @@
             </div>
         </div>
     </div>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.js" integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+import uuid
 # Create your models here.
+
 
 
 STATUS = (
@@ -36,7 +38,7 @@ class Client_Visit(models.Model):
 
 class Enquiry(models.Model):
     username = models.ForeignKey(User, verbose_name='username', on_delete=models.CASCADE ,blank=True,null=True )
-    Enquiry_number = models.CharField()
+    Enquiry_number = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4().hex[:8])
     Contact_number = models.CharField(max_length=1000,unique=True)
     Email = models.CharField(max_length=1000,) 
     Name = models.CharField(max_length=1000,) 

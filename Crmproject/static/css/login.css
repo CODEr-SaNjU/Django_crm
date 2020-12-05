@@ -37,7 +37,7 @@
   .card-signin .card-body {
     background-color: rgb(136, 132, 132);
     color: transparent;
-    color: lightcoral;
+    color: #eef5f6;
     padding: 2rem;
   }
 
@@ -52,7 +52,7 @@
   }
 
   .forgetpassword{
-    color: aliceblue;
+    color: rgb(163, 167, 168);
   }
   
   #btn-sign{
