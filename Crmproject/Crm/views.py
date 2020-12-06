@@ -56,9 +56,8 @@ from .models import Enquiry
 import datetime
 from django.core.paginator import PageNotAnInteger,EmptyPage,Paginator
 from django.template.loader import render_to_string
-from django.contrib import auth 
-from bootstrap_modal_forms.generic import BSModalCreateView
-
+from django.contrib import auth
+ 
 def login(request):
     if request.method == "POST":
         email = request.POST['email']
