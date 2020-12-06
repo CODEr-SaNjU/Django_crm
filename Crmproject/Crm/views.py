@@ -151,9 +151,9 @@ def enq_create(request):
 def Enquiry_Update(request,pk_id):
     obj_update = get_object_or_404(Enquiry,id=pk_id)
     if request.method=="POST":
-        form = EnquiryForm(request.POST, instance=obj_update)
+        form = UpdateEnquiryForm(request.POST, instance=obj_update)
     else:
-        form = EnquiryForm(instance=obj_update)
+        form = UpdateEnquiryForm(instance=obj_update)
     return save_enq_form(request,form,'html_files/enquiry_update.htm')
     
 
