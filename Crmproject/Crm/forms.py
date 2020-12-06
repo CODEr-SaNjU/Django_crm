@@ -23,7 +23,7 @@ class CreateEnquiryForm(forms.ModelForm):
 class EnquiryForm(forms.ModelForm):
     class Meta:
         model =Enquiry
-        fields = ['Contact_number','Email','Name','Company_name','Enquiry_details','City','State','enquiry_source','profession','visited_status','Visit_status','expected_purchase_Date','visit_date','Booking_Date','remarks']
+        fields = ['Contact_number','Email','Name','Company_name','Enquiry_details','City','State','username','enquiry_source','profession','visited_status','Visit_status','expected_purchase_Date','visit_date','Booking_Date','remarks']
         
         labels = {
             'username': ('Assign to user')
