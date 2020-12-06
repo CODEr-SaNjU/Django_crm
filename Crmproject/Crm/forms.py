@@ -6,27 +6,33 @@ from django.http import Http404, HttpResponse
 from django.contrib.auth.forms import UserCreationForm
 
 
+class SalespersonEnquiryForm(forms.ModelForm):
+  class Meta:
+    model = Enquiry
+    fields = ['Contact_number','Email','Name','Company_name','Enquiry_details','City','State']
 
 
+class CreateEnquiryForm(forms.ModelForm):
+  class Meta:
+    model = Enquiry
+    fields = ['username','Contact_number','Email','Name','Company_name','Enquiry_details','City','State']
+    labels = {
+      'username': ('Assign to user')
+      }
 
 class EnquiryForm(forms.ModelForm):
     class Meta:
         model =Enquiry
-        fields = ['username','enquiry_source','profession','visited_status','Visit_status','Contact_number','Email','Name','Company_name','Enquiry_details','City','State','expected_purchase_Date','visit_date','Booking_Date','remarks']
-        widgets = {
-          'Contact_number' : forms.TextInput(attrs={'class':'form-control','id':'rnid'}),
-          'QUERY_ID' : forms.TextInput(attrs={'class':'form-control','id':'queryid'}),
-          'QTYPE' : forms.TextInput(attrs={'class':'form-control','id':'qtypeid'}),
-          'Email' : forms.TextInput(attrs={'class':'form-control','id':'Emailid'}),
-          'MOB' : forms.TextInput(attrs={'class':'form-control','id':'MOBid'}),
-          'QUERY_MODID' : forms.TextInput(attrs={'class':'form-control','id':'QUERY_MODIDid'}),
-          'GLUSR_USR_COMPANYNAMEid' : forms.TextInput(attrs={'class':'form-control','id':'GLUSR_USR_COMPANYNAMEid'}),
-          'ENQ_MESSAGE':forms.Textarea(attrs={'class':'form-control'})
-
-        }
+        fields = ['Contact_number','Email','Name','Company_name','Enquiry_details','City','State','enquiry_source','profession','visited_status','Visit_status','expected_purchase_Date','visit_date','Booking_Date','remarks']
+        
         labels = {
             'username': ('Assign to user')
         }
+
+class UpdateEnquiryForm(forms.ModelForm):
+  class Meta:
+    model = Enquiry
+    fields = ['enquiry_source','profession','visited_status','Visit_status','Contact_number','Email','Name','Company_name','Enquiry_details','City','State','expected_purchase_Date','visit_date','Booking_Date','remarks']
 
 
 
