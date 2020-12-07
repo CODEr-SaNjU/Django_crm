@@ -12,6 +12,24 @@ class SalespersonEnquiryForm(forms.ModelForm):
     fields = ['Contact_number','Email','Name','Company_name','Enquiry_details','City','State']
 
 
+
+class salespersonUpdateEnquiryForm(forms.ModelForm):
+    class Meta:
+        model =Enquiry
+        fields = ['enquiry_source','profession','visited_status','Visit_status','expected_purchase_Date','visit_date','Booking_Date','Contact_number','Email','Name','Company_name','Enquiry_details','City','State']
+        labels = {
+      'Visit_status': ('Enquiry status')
+      }
+
+class salespersonstatusEnquiryForm(forms.ModelForm):
+  class Meta:
+    model = Enquiry
+    fields = ['Visit_status','remarks']
+    labels = {
+      'Visit_status': ('Enquiry status')
+      }
+
+
 class CreateEnquiryForm(forms.ModelForm):
   class Meta:
     model = Enquiry
@@ -20,17 +38,14 @@ class CreateEnquiryForm(forms.ModelForm):
       'username': ('Assign to user')
       }
 
-class EnquiryForm(forms.ModelForm):
-    class Meta:
-        model =Enquiry
-        fields = ['Contact_number','Email','Name','Company_name','Enquiry_details','City','State','enquiry_source','profession','visited_status','Visit_status','expected_purchase_Date','visit_date','Booking_Date','remarks']
-        
     
 class UpdateEnquiryForm(forms.ModelForm):
   class Meta:
     model = Enquiry
-    fields = ['enquiry_source','profession','visited_status','Visit_status','Contact_number','Email','Name','Company_name','Enquiry_details','City','State','expected_purchase_Date','visit_date','Booking_Date','remarks']
-
+    fields = ['username','enquiry_source','profession','visited_status','Visit_status','Contact_number','Email','Name','Company_name','Enquiry_details','City','State','expected_purchase_Date','visit_date','Booking_Date','remarks']
+    labels = {
+      'username': ('Assign to user')
+      }
 
 
 class UserForm(UserCreationForm):

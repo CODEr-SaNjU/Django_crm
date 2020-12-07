@@ -18,7 +18,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core.paginator import PageNotAnInteger,EmptyPage,Paginator
 import os
 from django.http import JsonResponse
-from . forms import UserForm ,SalespersonEnquiryForm ,CreateEnquiryForm ,UpdateEnquiryForm , EnquiryForm
+from . forms import UserForm ,SalespersonEnquiryForm ,CreateEnquiryForm ,UpdateEnquiryForm , salespersonUpdateEnquiryForm,salespersonstatusEnquiryForm
 import requests
 from django.db.models import Q
 import json
@@ -214,19 +214,19 @@ def user_delete(request,pk_id):
 
 @login_required(login_url='login')
 def saleperson_page(request):
-    Hot_enq = Enquiry.objects.filter(Visit_status=8,username=request.user)
+    Hot_enq = Enquiry.objects.filter(Visit_status=1,username=request.user)
     paginator = Paginator(Hot_enq,14)
     page_number = request.GET.get('page')
     page_obj= paginator.get_page(page_number)
     Hot_enq_count = Hot_enq.count()
 
-    cold_enq = Enquiry.objects.filter(username=request.user,Visit_status=9)
+    cold_enq = Enquiry.objects.filter(username=request.user,Visit_status=2)
     paginator = Paginator(cold_enq,14)
     page_number = request.GET.get('page')
     page_obj_cold_enq= paginator.get_page(page_number)
     cold_enq_count = cold_enq.count()
 
-    pending_enq = Enquiry.objects.filter(username=request.user,Visit_status=7)
+    pending_enq = Enquiry.objects.filter(username=request.user,Visit_status=3)
     paginator = Paginator(pending_enq,14)
     page_number = request.GET.get('page')
     page_obj_pending_enq= paginator.get_page(page_number)
@@ -238,13 +238,13 @@ def saleperson_page(request):
     page_obj_delivered_enq= paginator.get_page(page_number)
     delivered_enq_count = delivered_enq.count()
 
-    follow_up_enq = Enquiry.objects.filter(username=request.user,Visit_status=19)
+    follow_up_enq = Enquiry.objects.filter(username=request.user,Visit_status=5)
     paginator = Paginator(follow_up_enq,14)
     page_number = request.GET.get('page')
     page_obj_follow_up_enq= paginator.get_page(page_number)
     follow_up_enq_count = follow_up_enq.count()
 
-    lost_enq = Enquiry.objects.filter(username=request.user,Visit_status=5)
+    lost_enq = Enquiry.objects.filter(username=request.user,Visit_status=6)
     paginator = Paginator(lost_enq,14)
     page_number = request.GET.get('page')
     page_obj_lost_enq= paginator.get_page(page_number)
@@ -264,11 +264,11 @@ def salesperson_save_enq_form(request, form, template_name):
         if form.is_valid():
             form.save()
             data['form_is_valid'] = True
-            page_obj_cold_enq = Enquiry.objects.filter(username=request.user,Visit_status=9)
-            page_obj = Enquiry.objects.filter(Visit_status=8,username=request.user)
-            page_obj_pending_enq = Enquiry.objects.filter(username=request.user,Visit_status=7)
+            page_obj_cold_enq = Enquiry.objects.filter(username=request.user,Visit_status=2)
+            page_obj = Enquiry.objects.filter(Visit_status=1,username=request.user)
+            page_obj_pending_enq = Enquiry.objects.filter(username=request.user,Visit_status=3)
             page_obj_delivered_enq = Enquiry.objects.filter(username=request.user,Visit_status=4)
-            page_obj_lost_enq = Enquiry.objects.filter(username=request.user,Visit_status=5)
+            page_obj_lost_enq = Enquiry.objects.filter(username=request.user,Visit_status=6)
             data['html_enq_list'] = render_to_string('Salesperson_Dashboard/cold_list.htm',{'page_obj_cold_enq':page_obj_cold_enq,'page_obj':page_obj,'page_obj_pending_enq':page_obj_pending_enq,'page_obj_delivered_enq':page_obj_delivered_enq,'page_obj_lost_enq':page_obj_lost_enq})
         else:
             data['form_is_valid'] = False
@@ -285,9 +285,9 @@ def salesperson_enq_create(request):
         if form.is_valid():
             form.save()
             data['form_is_valid'] = True
-            page_obj_cold_enq = Enquiry.objects.filter(username=request.user,Visit_status=9)
-            page_obj = Enquiry.objects.filter(Visit_status=8,username=request.user)
-            page_obj_pending_enq = Enquiry.objects.filter(username=request.user,Visit_status=7)
+            page_obj_cold_enq = Enquiry.objects.filter(username=request.user,Visit_status=2)
+            page_obj = Enquiry.objects.filter(Visit_status=1,username=request.user)
+            page_obj_pending_enq = Enquiry.objects.filter(username=request.user,Visit_status=3)
             page_obj_delivered_enq = Enquiry.objects.filter(username=request.user,Visit_status=4)
             page_obj_lost_enq = Enquiry.objects.filter(username=request.user,Visit_status=5)
             data['html_enq_list'] = render_to_string('Salesperson_Dashboard/cold_list.htm',{'page_obj_cold_enq':page_obj_cold_enq,'page_obj':page_obj,'page_obj_pending_enq':page_obj_pending_enq,'page_obj_delivered_enq':page_obj_delivered_enq,'page_obj_lost_enq':page_obj_lost_enq})
@@ -304,9 +304,9 @@ def salesperson_enq_create(request):
 def salesperson_Enquiry_Update(request,pk_id):
     obj_update = get_object_or_404(Enquiry,id=pk_id)
     if request.method=="POST":
-        form = EnquiryForm(request.POST, instance=obj_update)
+        form = salespersonUpdateEnquiryForm(request.POST, instance=obj_update)
     else:
-        form = EnquiryForm(instance=obj_update)
+        form = salespersonUpdateEnquiryForm(instance=obj_update)
     return salesperson_save_enq_form(request,form,'Salesperson_Dashboard/salesenq_update.htm')
     
 
@@ -316,9 +316,9 @@ def salesperson_Enquiry_Delete(request,pk_id):
     if request.method == "POST":
         obj_delete.delete()
         data['form_is_valid'] = True
-        page_obj_cold_enq = Enquiry.objects.filter(username=request.user,Visit_status=9)
-        page_obj = Enquiry.objects.filter(Visit_status=8,username=request.user)
-        page_obj_pending_enq = Enquiry.objects.filter(username=request.user,Visit_status=7)
+        page_obj_cold_enq = Enquiry.objects.filter(username=request.user,Visit_status=2)
+        page_obj = Enquiry.objects.filter(Visit_status=1,username=request.user)
+        page_obj_pending_enq = Enquiry.objects.filter(username=request.user,Visit_status=3)
         page_obj_delivered_enq = Enquiry.objects.filter(username=request.user,Visit_status=4)
         page_obj_lost_enq = Enquiry.objects.filter(username=request.user,Visit_status=5)
         data['html_enq_list'] = render_to_string('Salesperson_Dashboard/cold_list.htm',{'page_obj_cold_enq':page_obj_cold_enq,'page_obj':page_obj,'page_obj_pending_enq':page_obj_pending_enq,'page_obj_delivered_enq':page_obj_delivered_enq,'page_obj_lost_enq':page_obj_lost_enq})

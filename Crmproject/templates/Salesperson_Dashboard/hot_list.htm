@@ -1,14 +1,14 @@
 {% for i in page_obj %}
 <tr style="color: black; font-weight: bold;">
-  <td>{{i.QUERY_ID}}</td>
-  <td>{{i.SENDERNAME}}</td>
-  <td>{{i.MOB}}</td>
-  <td>{{i.SENDEREMAIL|safe|truncatechars:"7"|linebreaks}}</td>
-  <td>{{i.SUBJECT|safe|truncatewords:"4"|linebreaks}}</td>
-  <td>{{i.ENQ_MESSAGE|safe|truncatewords:"4"|linebreaks}}</td>
-  <td>{{i.ENQ_CITY}}</td>
-  <td>{{i.ENQ_STATE|truncatechars:"8"|linebreaks}}</td>
+  <td>{{i.Enquiry_number}}</td>
+  <td>{{i.Name}}</td>
+  <td>{{i.Company_name|safe|truncatechars:"7"|linebreaks}}</td>
+  <td>{{i.City|safe|truncatechars:"20"|linebreaks}}</td>
+  <td>{{i.State|safe|truncatechars:"20"|linebreaks}}</td>
+  <td>{{i.Contact_number}}</td>
+  <td>{{i.Email|truncatechars:"20"|linebreaks}}</td>
   <td>{{i.DATE_R}}</td>
+  <td>{{i.Visit_status}}</td>
   <td>
     <button type="button"  class="btn btn-warning btn-sm  js-update-enq" data-url="{% url 'salesperson_Enquiry_Update' i.id %}"><i class="fa fa-plus" aria-hidden="true"></i></button>
     <button type="button"  class="btn btn-danger btn-sm  js-delete-enq"   data-url="{% url 'salesperson_Enquiry_Delete' i.id %}"><i class="fa fa-trash" aria-hidden="true"></i></button>
