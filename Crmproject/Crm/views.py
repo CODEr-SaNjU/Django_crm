@@ -29,7 +29,8 @@ from django.core.paginator import PageNotAnInteger,EmptyPage,Paginator
 from django.template.loader import render_to_string
 from django.contrib import auth 
 
- 
+
+@unauthenticated_user
 def login(request):
     if request.method == "POST":
         email = request.POST['email']
