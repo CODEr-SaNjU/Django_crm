@@ -12,11 +12,7 @@ STATUS = (
 
 
 
-class visit_status_time(models.Model):
-    last_updtae = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return self.last_updtae
 
 
 
@@ -61,7 +57,6 @@ class Enquiry(models.Model):
     Visit_status = models.ForeignKey(Client_Visit,on_delete=models.CASCADE,null=True,blank=True )
     Booking_Date = models.DateField(verbose_name='Booking Date',auto_now_add=False,blank=True,null=True)
     remarks  = models.TextField(blank=True,null=True)
-    last_update = models.ForeignKey(visit_status_time,on_delete=models.CASCADE,null=False,blank=False)
 
     def __str__(self):
         return self.Enquiry_number
