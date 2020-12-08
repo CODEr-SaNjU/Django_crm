@@ -16,8 +16,6 @@ STATUS = (
 
 
 
-
-
 class Enquiry_Source(models.Model):
     enq_source = models.CharField(max_length=100,blank=True,null=True)
 
