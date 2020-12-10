@@ -2,7 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 import uuid
 # Create your models here.
-
+import string
+import random
 
 
 STATUS = (
@@ -36,9 +37,13 @@ class Client_Visit(models.Model):
         return self.Visit_status
 
 
+letters = string.ascii_uppercase
+Enquiry_number=(''.join(random.choice(letters) for i in range(10)) )
+print(Enquiry_number)
+
 class Enquiry(models.Model):
     username = models.ForeignKey(User, verbose_name='username', on_delete=models.CASCADE ,blank=True,null=True )
-    Enquiry_number = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4().hex[:8])
+    Enquiry_number = models.CharField(max_length=100, blank=True, unique=True, default=Enquiry_number)
     Contact_number = models.CharField(max_length=12,unique=True)
     Email = models.CharField(max_length=100,) 
     Name = models.CharField(max_length=100,) 
@@ -51,7 +56,7 @@ class Enquiry(models.Model):
     profession = models.ForeignKey(Profession,on_delete=models.CASCADE,null=True,blank=True )
     visit_date = models.DateField(verbose_name='Visit Date',auto_now_add=False,blank=True,null=True)
     visited_status = models.IntegerField(choices=STATUS, default=1)
-    Visit_status = models.ForeignKey(Client_Visit,on_delete=models.CASCADE,null=True,blank=True,default="COLD")
+    Visit_status = models.ForeignKey(Client_Visit,on_delete=models.CASCADE,null=True,blank=True,default=2)
     Booking_Date = models.DateField(verbose_name='Booking Date',auto_now_add=False,blank=True,null=True)
     remarks  = models.TextField(blank=True,null=True)
 
