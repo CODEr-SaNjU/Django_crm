@@ -1,6 +1,6 @@
 {% block content %}
 <div class="col-14">
-    <button type="button" class="btn btn-primary btn-sm btn-block js-create-enq" style="margin-top: -13px;" data-url="{% url 'enq_create' %}">Add New Enquiry</button>
+    <button type="button" class="btn btn-primary btn-sm btn-block js-create-newenq" style="margin-top: -13px;" data-url="{% url 'enq_create' %}">Add New Enquiry</button>
     <table class="table table-hover table-sm" id="table-enq" style="padding: 100px; font-size: small;">
       <thead>
         <tr>
@@ -76,7 +76,7 @@ var saveForm = function () {
 /* Binding */
 
 // Create book
-$(".js-create-enq").click(loadForm);
+$(".js-create-newenq").click(loadForm);
 $("#Newaddenq").on("submit", ".js-create-enq-form", saveForm);
 
 // Update book

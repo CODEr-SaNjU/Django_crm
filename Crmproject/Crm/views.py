@@ -282,7 +282,7 @@ def salesperson_save_enq_form(request, form, template_name):
 def salesperson_enq_create(request):
     data = dict()
     if request.method == 'POST':
-        form = SalespersonEnquiryForm(request.POST)
+        form = CreateEnquiryForm(request.POST)
         if form.is_valid():
             form.save()
             data['form_is_valid'] = True
@@ -295,7 +295,7 @@ def salesperson_enq_create(request):
         else:
             data['form_is_valid'] =False
     else:
-        form = SalespersonEnquiryForm()
+        form = CreateEnquiryForm()
     context={'form':form}
     data['html_form']  = render_to_string('Salesperson_Dashboard/add_enq.htm',context,request=request)
     return JsonResponse(data)
