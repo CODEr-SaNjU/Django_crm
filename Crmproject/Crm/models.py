@@ -4,6 +4,7 @@ import uuid
 # Create your models here.
 import string
 import random
+from datetime import timezone
 
 
 STATUS = (
@@ -54,7 +55,7 @@ class Enquiry(models.Model):
     enquiry_source = models.ForeignKey(Enquiry_Source,on_delete=models.CASCADE,null=True,blank=True )
     expected_purchase_Date = models.DateField(verbose_name='Expected Purchase Date',auto_now_add=False,blank=True,null=True)
     profession = models.ForeignKey(Profession,on_delete=models.CASCADE,null=True,blank=True )
-    visit_date = models.DateField(verbose_name='Visit Date',auto_now_add=False,blank=True,null=True)
+    visit_date = models.DateTimeField(verbose_name='Visit Date',auto_now_add=True,blank=True,null=True)
     visited_status = models.IntegerField(choices=STATUS, default=1)
     Visit_status = models.ForeignKey(Client_Visit,on_delete=models.CASCADE,null=True,blank=True,default=2)
     Booking_Date = models.DateField(verbose_name='Booking Date',auto_now_add=False,blank=True,null=True)
@@ -63,3 +64,9 @@ class Enquiry(models.Model):
     def __str__(self):
         return self.Enquiry_number
 
+    def save(self, *args, **kwargs):
+        if self.Visit_status and self.visit_date is None:
+            self.visit_date = timezone.now()
+        elif not self.Visit_status and self.visit_date is not None:
+            self.visit_date = None
+        super(Enquiry, self).save(*args, **kwargs)

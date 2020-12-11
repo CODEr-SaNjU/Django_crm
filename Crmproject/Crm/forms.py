@@ -11,16 +11,17 @@ class SalespersonEnquiryForm(forms.ModelForm):
     model = Enquiry
     fields = ['Contact_number','Email','Name','Company_name','Enquiry_details','City','State']
 
+class DateInput(forms.DateInput):
+    input_type = 'date'
 
 
 class salespersonUpdateEnquiryForm(forms.ModelForm):
     class Meta:
         model =Enquiry
-        fields = ['enquiry_source','profession','visited_status','Visit_status','expected_purchase_Date','visit_date','Booking_Date','Contact_number','Email','Name','Company_name','Enquiry_details','City','State']
+        fields = ['enquiry_source','profession','visited_status','Visit_status','expected_purchase_Date','Booking_Date','Contact_number','Email','Name','Company_name','Enquiry_details','City','State']
         widget = {
-          'expected_purchase_Date' : forms.DateInput(attrs={'class':'form-control','type':'date','id':'expected_purchase_Dateid'}),
-          'visit_date' : forms.DateInput(attrs={'class':'form-control','type':'date','id':'visit_dateid'}),
-          'Booking_Date' : forms.DateTimeInput(attrs={'class':'form-control', 'type':'date', 'id':'Booking_Dateid'}),
+          'expected_purchase_Date':DateInput(attrs={'type': 'date'}),
+          'Booking_Date':DateInput(attrs={'type': 'date'})
           }
         labels = {
       'Visit_status': ('Enquiry status')
@@ -48,14 +49,13 @@ class CreateEnquiryForm(forms.ModelForm):
 class UpdateEnquiryForm(forms.ModelForm):
   class Meta:
     model = Enquiry
-    fields = ['username','enquiry_source','profession','visited_status','Visit_status','expected_purchase_Date','visit_date','Booking_Date','remarks','Contact_number','Email','Name','Company_name','Enquiry_details','City','State']
+    fields = ['username','enquiry_source','profession','visited_status','Visit_status','expected_purchase_Date','Booking_Date','remarks','Contact_number','Email','Name','Company_name','Enquiry_details','City','State']
     labels = {
       'username': ('Assign to user')
       }
     widget = {
-      'expected_purchase_Date' : forms.DateInput(attrs={'class':'form-control','type':'date','id':'expected_purchase_Dateid'}),
-      'visit_date' : forms.DateInput(attrs={'class':'form-control','type':'date','id':'visit_dateid'}),
-      'Booking_Date' : forms.DateTimeInput(attrs={'class':'form-control', 'type':'date', 'id':'Booking_Dateid'}),
+      'expected_purchase_Date' :DateInput(attrs={'type': 'date'}),
+      'Booking_Date' :DateInput(attrs={'type': 'date'}),
     }
 
 class UserForm(UserCreationForm):
