@@ -83,7 +83,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
 
-        'NAME': 'Django_Crm_db',
+        'NAME': 'crm_db',
 
         'USER': 'postgres',
 

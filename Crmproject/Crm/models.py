@@ -16,7 +16,6 @@ STATUS = (
 
 
 
-
 class Enquiry_Source(models.Model):
     enq_source = models.CharField(max_length=100,blank=True,null=True)
 
@@ -40,7 +39,14 @@ class Client_Visit(models.Model):
 
 letters = string.ascii_uppercase
 Enquiry_number=(''.join(random.choice(letters) for i in range(10)) )
-print(Enquiry_number)
+
+class Enquiry_update(models.Model):
+    enquiry_status_time = models.TextField(max_length=1000,default="")
+
+
+    def __str__(self):
+        return self.enquiry_status_time
+
 
 class Enquiry(models.Model):
     username = models.ForeignKey(User, verbose_name='username', on_delete=models.CASCADE ,blank=True,null=True )
@@ -64,9 +70,6 @@ class Enquiry(models.Model):
     def __str__(self):
         return self.Enquiry_number
 
-    def save(self, *args, **kwargs):
-        if self.Visit_status and self.visit_date is None:
-            self.visit_date = timezone.now()
-        elif not self.Visit_status and self.visit_date is not None:
-            self.visit_date = None
-        super(Enquiry, self).save(*args, **kwargs)
+    def save(self):
+       super(Enquiry, self).save()
+       Enquiry_update.objects.create(enquiry_status_time=self.visit_date)
