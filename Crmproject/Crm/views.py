@@ -12,8 +12,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required,permission_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from . decorators import unauthenticated_user ,allowed_user ,admin_only
-import datetime  
+from . decorators import unauthenticated_user ,allowed_user ,admin_only  
 from django.contrib.auth.forms import UserCreationForm
 from django.core.paginator import PageNotAnInteger,EmptyPage,Paginator
 import os
@@ -24,10 +23,10 @@ from django.db.models import Q
 import json
 from django.urls import reverse_lazy
 from .models import Enquiry
-import datetime
-from django.core.paginator import PageNotAnInteger,EmptyPage,Paginator
 from django.template.loader import render_to_string
-from django.contrib import auth 
+from datetime import datetime 
+import pytz 
+
 
 
 @unauthenticated_user
@@ -117,7 +116,12 @@ def save_enq_form(request, form, template_name):
     data = dict()
     if request.method == 'POST':
         if form.is_valid():
-            form.save()
+            user = form.save()
+            IST = pytz.timezone('Asia/Kolkata')
+            datetime_ist = datetime.now(IST)
+            x = datetime_ist.strftime('%Y:%m:%d %H:%M:%S %Z %z')
+            # user.enquiry_status_time = request.user.Booking_Date
+            print("sanju",x)
             data['form_is_valid'] = True
             last_all_enq = Enquiry.objects.all()
             last_all_enq = Enquiry.objects.filter().order_by('-id')[:10]
