@@ -1,11 +1,13 @@
 from django.shortcuts import render,redirect , get_object_or_404
 from django.contrib.auth.models import User,auth ,Group
 from django.http import Http404, HttpResponse
+from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render,redirect , get_object_or_404
 from django.contrib.auth.models import User,auth ,Group
 from django.http import Http404, HttpResponse
 from django.contrib.auth.models import AbstractBaseUser, UserManager
 from django.contrib import messages
+import csv,io
 from django.contrib.auth import authenticate,get_user_model
 from django.contrib import auth 
 from django.contrib.auth import update_session_auth_hash
@@ -21,8 +23,9 @@ from . forms import UserForm ,SalespersonEnquiryForm ,CreateEnquiryForm ,UpdateE
 import requests
 from django.db.models import Q
 import json
+from django.conf import  settings
 from django.urls import reverse_lazy
-from .models import Enquiry
+from .models import Enquiry,Enquiry_Source,Profession,Client_Visit
 from django.template.loader import render_to_string
 from datetime import datetime 
 import pytz 
@@ -341,3 +344,64 @@ def salesenquiry_search(request):
     return render(request,'Salesperson_Dashboard/salesperson.htm',{"page_obj":page_obj})
 
 
+
+
+def csv_Files_import(request):
+    if request.method == "POST" and request.FILES['file']:
+        myfile = request.FILES['file']
+        print(myfile)
+        fs = FileSystemStorage()
+        filename = fs.save(myfile.name,myfile)
+        print(filename)
+        uploaded_file_url = os.path.join(settings.BASE_DIR+fs.url(filename))
+
+        if os.path.exists(uploaded_file_url) == True:
+            print(uploaded_file_url)
+            if not  myfile.name.endswith('.csv'):
+                messages.error(request,"this is not csv file ")
+            # 
+            
+            with open(uploaded_file_url,'r') as f:
+                reader = csv.reader(f)
+                print(f)
+                # print(reader)
+                for column, row in enumerate(reader):
+                    if column == 0:
+                        pass
+                    else:
+                        row = "".join(row)
+                        row = row.replace(";"," ")
+                        row = row.split()
+                        print(row)
+                        user = User.objects.get(username=row[0])
+                        Enq_source = Enquiry_Source.objects.get(enq_source=row[9])
+                        profession = Profession.objects.get(profession=row[11])
+                        Visit_status = Client_Visit.objects.get(Visit_status=row[12])
+
+                        print(user)
+                        Enquiry.objects.create(
+                            username = user,
+                            Enquiry_number = row[1],
+                            Contact_number=row[2],
+                            Email=row[3],
+                            Name=row[4],
+                            Company_name=row[5],
+                            Enquiry_details=row[6],
+                            City=row[7],
+                            State=row[8],
+                            enquiry_source=Enq_source,
+                            expected_purchase_Date=row[10],
+                            profession=profession,
+                            Visit_status = Visit_status,
+                            remarks = row[13]
+
+                        )
+            return HttpResponse("message done ")
+
+    else:
+        return HttpResponse("message done ")
+
+
+
+
+    

@@ -17,6 +17,7 @@ urlpatterns = [
     path("user_update/<str:pk_id>/",views.user_update,name="user_update"),
     path("enq_create/",views.enq_create,name="enq_create"),
     path("salesperson/",views.saleperson_page,name="saleperson"),
+    path('csv_Files_import/',views.csv_Files_import,name="csv_Files_import"),
     path("salesperson_enq_create/",views.salesperson_enq_create,name="salesperson_enq_create"),
     path("salesperson_Enquiry_Delete/<str:pk_id>/",views.salesperson_Enquiry_Delete,name="salesperson_Enquiry_Delete"),
     path("salesperson_Enquiry_Update/<str:pk_id>/",views.salesperson_Enquiry_Update,name="salesperson_Enquiry_Update"),

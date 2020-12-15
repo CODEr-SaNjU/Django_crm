@@ -22,4 +22,14 @@
   <div class="tab-pane" id="enquiryclosed">
     <h1>enquiryclosed here</h1>
   </div>
+  <div class="div">
+    <form action=" {%  url 'csv_Files_import' %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="exampleFormControlFile1">Example file input</label>
+        <input type="file" class="form-control-file" name="file" id="exampleFormControlFile1" accept=".csv" required>
+      </div>
+      <button class="btn btn-info" type="submit">submit</button>
+    </form>
+  </div>
 </div>

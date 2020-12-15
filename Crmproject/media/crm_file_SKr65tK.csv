@@ -1,0 +1,4 @@
+Enquiry_number,Contact_number,Email,Name,Company_name,Enquiry_details,City,State,enquiry_source,expected_purchase_Date,profession,visited_status,Visit_status,remarks
+1,"Linus Torvalds","Linux Kernel",Email,Name,Company_name,Enquiry_details,City,State,enquiry_source,expected_purchase_Date,profession,yes,Visit_status,remarks
+2,"Tim Berners-Lee","World Wide Web",Email,Name,Company_name,Enquiry_details,City,State,enquiry_source,expected_purchase_Date,profession,yes,Visit_status,remarks
+3,"Guido van Rossum","Python Programming",Email,Name,Company_name,Enquiry_details,City,State,enquiry_source,expected_purchase_Date,profession,yes,Visit_status,remarks

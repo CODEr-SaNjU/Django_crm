@@ -38,6 +38,7 @@ django-crispy-forms = "*"
 django-bootstrap-modal-forms = "*"
 django-widget-tweaks = "*"
 django-allauth = "*"
+pandas = "*"
 
 [dev-packages]
 

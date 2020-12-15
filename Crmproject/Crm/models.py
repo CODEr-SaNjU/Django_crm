@@ -60,18 +60,18 @@ class Enquiry(models.Model):
     visited_status = models.IntegerField(choices=STATUS, default=1)
     Visit_status = models.ForeignKey(Client_Visit,on_delete=models.CASCADE,null=True,blank=True,default=2)
     Booking_Date = models.DateField(verbose_name='Booking Date',auto_now_add=False,blank=True,null=True)
-    enquiry_status_time = models.CharField(max_length=1000,blank=False,null=False)
+    enquiry_status_time = models.CharField(max_length=1000,blank=False,null=False,default="sanju here")
     remarks  = models.TextField(blank=True,null=True)
 
     def __str__(self):
         return self.Enquiry_number
 
-    def save(self, *args, **kwargs):
-        if self.enquiry_status_time and self.enquiry_status_time is None:
-            self.enquiry_status_time = timezone.now()
-        elif not self.enquiry_status_time and self.enquiry_status_time is not None:
-            self.enquiry_status_time = None
-        super(Enquiry, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if self.enquiry_status_time and self.enquiry_status_time is None:
+    #         self.enquiry_status_time = timezone.now()
+    #     elif not self.enquiry_status_time and self.enquiry_status_time is not None:
+    #         self.enquiry_status_time = None
+    #     super(Enquiry, self).save(*args, **kwargs,)
 
     # def save(self):
     #    super(Enquiry, self).save()
