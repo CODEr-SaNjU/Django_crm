@@ -394,7 +394,6 @@ def csv_Files_import(request):
                             profession=profession,
                             Visit_status = Visit_status,
                             remarks = row[13]
-
                         )
             return HttpResponse("message done ")
 
