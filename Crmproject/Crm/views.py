@@ -51,7 +51,7 @@ def login(request):
 @login_required(login_url='login')
 def logout(request):
     auth.logout(request)
-    return render(request,'html_files/logout.htm')
+    return redirect("login")
 
 
 @login_required(login_url='login')
@@ -343,7 +343,7 @@ def salesperson_Enquiry_Delete(request,pk_id):
 def salesenquiry_search(request):
     try:
         qur = request.GET.get('search')
-        page_obj = Enquiry.objects.filter(Q(SENDERNAME__icontains=qur) | Q(QUERY_ID__icontains=qur) | Q(ENQ_STATE__icontains=qur),username=request.user)
+        page_obj = Enquiry.objects.filter(Q(Name__icontains=qur) | Q(Enquiry_number__icontains=qur) | Q(State__icontains=qur) )
         return render(request,'Salesperson_Dashboard/salesperson.htm',{"page_obj":page_obj})
     except:
         return HttpResponse("please Cannot use None as a query value")
@@ -363,8 +363,7 @@ def csv_Files_import(request):
         if os.path.exists(uploaded_file_url) == True:
             print(uploaded_file_url)
             if not  myfile.name.endswith('.csv'):
-                messages.error(request,"this is not csv file ")
-            # 
+                messages.error(request,"this is not csv file ") 
             
             with open(uploaded_file_url,'r') as f:
                 reader = csv.reader(f)
@@ -382,28 +381,33 @@ def csv_Files_import(request):
                         Enq_source = Enquiry_Source.objects.get(enq_source=row[9])
                         profession = Profession.objects.get(profession=row[11])
                         Visit_status = Client_Visit.objects.get(Visit_status=row[12])
-
-                        print(user)
-                        Enquiry.objects.create(
-                            username = user,
-                            Enquiry_number = row[1],
-                            Contact_number=row[2],
-                            Email=row[3],
-                            Name=row[4],
-                            Company_name=row[5],
-                            Enquiry_details=row[6],
-                            City=row[7],
-                            State=row[8],
-                            enquiry_source=Enq_source,
-                            expected_purchase_Date=row[10],
-                            profession=profession,
-                            Visit_status = Visit_status,
-                            remarks = row[13]
-                        )
-            return HttpResponse("message done ")
+                        Enq_number = row[1]
+                        mobile_number = row[2]
+                        if Enquiry.objects.filter(Enquiry_number=Enq_number).exists():
+                            return HttpResponse(f" enquiry number {Enq_number}  alerady existst")
+                        elif Enquiry.objects.filter(Contact_number=mobile_number).exists():
+                            return HttpResponse(f" mobile  number {mobile_number} alerady existst")
+                        else:
+                            Enquiry.objects.create(
+                                username = user,
+                                Enquiry_number = row[1],
+                                Contact_number=row[2],
+                                Email=row[3],
+                                Name=row[4],
+                                Company_name=row[5],
+                                Enquiry_details=row[6],
+                                City=row[7],
+                                State=row[8],
+                                enquiry_source=Enq_source,
+                                expected_purchase_Date=row[10],
+                                profession=profession,
+                                Visit_status = Visit_status,
+                                remarks = row[13]
+                            )
+            return HttpResponse(" Your csv  File is import successfully ")
 
     else:
-        return HttpResponse("message done ")
+        return redirect("Admin_panel")
 
 
 

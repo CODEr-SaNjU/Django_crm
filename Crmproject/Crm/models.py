@@ -4,6 +4,8 @@ import uuid
 # Create your models here.
 import string
 import random
+from django.core.validators import MaxValueValidator,MinValueValidator,MaxLengthValidator,RegexValidator
+
 from datetime import timezone
 
 
@@ -46,7 +48,7 @@ Enquiry_number=(''.join(random.choice(letters) for i in range(10)) )
 class Enquiry(models.Model):
     username = models.ForeignKey(User, verbose_name='username', on_delete=models.CASCADE ,blank=True,null=True )
     Enquiry_number = models.CharField(max_length=100, blank=True, unique=True, default=Enquiry_number)
-    Contact_number = models.CharField(max_length=12,unique=True)
+    Contact_number = models.CharField(max_length=13,unique=True,validators=[RegexValidator(r'^\d{1,10}$')])
     Email = models.CharField(max_length=100,) 
     Name = models.CharField(max_length=100,) 
     Company_name = models.CharField(max_length=500,)
