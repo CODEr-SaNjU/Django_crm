@@ -93,24 +93,26 @@ def Admin_panel(request):
 
 
 def search_enq_month(request):
-    qur = request.GET.get('search')
-    qur1 = request.GET.get("search1")
-    datetime_object = datetime.datetime.strptime(qur1, "%Y-%m-%d")
-    datetime_object2 = datetime.datetime.strptime(qur, "%Y-%m-%d")
-    strt = datetime_object.strftime("%d-%m-%Y")
-    endt = datetime_object2.strftime("%d-%m-%Y")
-    print(strt)
-    print(endt)
-    last_all_enq = Enquiry.objects.filter(DATE_RE__lte= strt,DATE_RE__gte = endt)
-    # print(last_all_enq)
-    return render(request,'html_files/Main.htm',{"last_all_enq":last_all_enq})
+    try:
+        qur = request.GET.get('search')
+        qur1 = request.GET.get("search1")
+        print(qur)
+        print(qur1)
+        last_all_enq = Enquiry.objects.filter(Booking_Date__range=(qur,qur1))
+        # print(last_all_enq)
+        return render(request,'html_files/Main.htm',{"last_all_enq":last_all_enq})
+    except:
+        return HttpResponse("smothing is wrong")
 
 
 @admin_only
 def Enquiry_search(request):
-    qur = request.GET.get('search')
-    last_all_enq = Enquiry.objects.filter(Q(SENDERNAME__icontains=qur) | Q(QUERY_ID__icontains=qur) | Q(ENQ_STATE__icontains=qur) )
-    return render(request,'html_files/Main.htm',{"last_all_enq":last_all_enq})
+    try:
+        qur = request.GET.get('search')
+        last_all_enq = Enquiry.objects.filter(Q(Name__icontains=qur) | Q(Enquiry_number__icontains=qur) | Q(State__icontains=qur) )
+        return render(request,'html_files/Main.htm',{"last_all_enq":last_all_enq})
+    except:
+        return HttpResponse("Cannot use None as a query value")
   
 
 
@@ -339,9 +341,12 @@ def salesperson_Enquiry_Delete(request,pk_id):
 
 
 def salesenquiry_search(request):
-    qur = request.GET.get('search')
-    page_obj = Enquiry.objects.filter(Q(SENDERNAME__icontains=qur) | Q(QUERY_ID__icontains=qur) | Q(ENQ_STATE__icontains=qur),username=request.user)
-    return render(request,'Salesperson_Dashboard/salesperson.htm',{"page_obj":page_obj})
+    try:
+        qur = request.GET.get('search')
+        page_obj = Enquiry.objects.filter(Q(SENDERNAME__icontains=qur) | Q(QUERY_ID__icontains=qur) | Q(ENQ_STATE__icontains=qur),username=request.user)
+        return render(request,'Salesperson_Dashboard/salesperson.htm',{"page_obj":page_obj})
+    except:
+        return HttpResponse("please Cannot use None as a query value")
 
 
 

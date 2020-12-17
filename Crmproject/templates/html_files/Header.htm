@@ -12,16 +12,16 @@
                                 </li>
                             </ul>
                             <span class="navbar-text">
-                                <form class="form-inline" method="GET" action="/search_enq_month/" style="font-weight: bolder;">
+                                <form class="form-inline" method="GET" action="{% url 'search_enq_month' %}" style="font-weight: bolder;">
                                     <label for="date" style="color: white;" class="mr-sm-2 ">From :</label>
                                     <input type="date" class="form-control  mb-2 mr-sm-2" placeholder="Enter date"  required name="search"id="date">
                                     <label for="to" style="color: white;" class="mr-sm-2">To:</label>
-                                    <input type="date" class="form-control   mb-2 mr-sm-2" placeholder="Enter date" required name="search" id="to">
+                                    <input type="date" class="form-control   mb-2 mr-sm-2" placeholder="Enter date" required name="search1" id="to">
                                     <button type="submit" class="btn btn-primary mb-1">Submit</button>
                                 </form>
                             </span>
                             <span class="navbar-text" style="margin-left:10px ;">
-                                <form class="form-inline" method="GET" action="/Enquiry_search/" style="font-weight: bolder;">
+                                <form class="form-inline" method="GET" action="{% url 'Enquiry_search' %}" style="font-weight: bolder;">
                                     <input type="text" class="form-control id="search" name="search"   mb-2 mr-sm-2" placeholder="Search Enquiry " id="date">
                                     <button type="submit" class="btn btn-primary mb-1" style="margin-left:5px ;">Submit</button>
                                 </form>

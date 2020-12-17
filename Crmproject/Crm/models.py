@@ -59,7 +59,7 @@ class Enquiry(models.Model):
     visit_date = models.DateTimeField(verbose_name='Visit Date',auto_now=True,blank=True,null=True)
     visited_status = models.IntegerField(choices=STATUS, default=1)
     Visit_status = models.ForeignKey(Client_Visit,on_delete=models.CASCADE,null=True,blank=True,default=2)
-    Booking_Date = models.DateField(verbose_name='Booking Date',auto_now_add=False,blank=True,null=True)
+    Booking_Date = models.DateField(verbose_name='Booking Date',blank=True,null=True)
     enquiry_status_time = models.CharField(max_length=1000,blank=False,null=False,default="sanju here")
     remarks  = models.TextField(blank=True,null=True)
 
