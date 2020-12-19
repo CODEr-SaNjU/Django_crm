@@ -5,14 +5,14 @@ from .models import Client_Visit
 from django.http import Http404, HttpResponse
 from django.contrib.auth.forms import UserCreationForm
 
+class DateInput(forms.DateInput):
+  input_type = 'date'
 
 class SalespersonEnquiryForm(forms.ModelForm):
   class Meta:
     model = Enquiry
     fields = ['Contact_number','Email','Name','Company_name','Enquiry_details','City','State']
 
-class DateInput(forms.DateInput):
-    input_type = 'date'
 
 
 class salespersonUpdateEnquiryForm(forms.ModelForm):
@@ -20,7 +20,7 @@ class salespersonUpdateEnquiryForm(forms.ModelForm):
         model =Enquiry
         fields = ['enquiry_source','profession','visited_status','Visit_status','Follow_up','expected_purchase_Date','Booking_Date','Contact_number','Email','Name','Company_name','Enquiry_details','City','State']
         widget = {
-          'expected_purchase_Date':forms.DateInput(attrs={'type': 'date','class':'datepicker'}),
+          'expected_purchase_Date':forms.DateInput(attrs={'type': 'date',}),
           'Booking_Date':DateInput(attrs={'type': 'date'}),
           'Follow_up':DateInput()
         }

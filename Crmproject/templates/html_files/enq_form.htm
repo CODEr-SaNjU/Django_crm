@@ -9,7 +9,20 @@
     {% endfor %}
   </div>
 
+<style>
+ #id_Follow_up, label[for="id_Follow_up"]{
+    display: none;
+}
+</style>
 
+<script>
+    $( function() {
+    $( "#id_expected_purchase_Date").datepicker();
+    $( "#id_Follow_up").datepicker();
+    $( "#id_Booking_Date").datepicker();
+  });
+
+</script>
 
 
 {% endfor %}
