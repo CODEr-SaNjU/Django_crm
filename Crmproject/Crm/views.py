@@ -98,7 +98,7 @@ def search_enq_month(request):
         qur1 = request.GET.get("search1")
         # print(qur)
         # print(qur1)
-        last_all_enq = Enquiry.objects.filter(Booking_Date__range=(qur,qur1))
+        last_all_enq = Enquiry.objects.filter(created_at__range=(qur,qur1))
         # print(last_all_enq)
         return render(request,'html_files/Main.htm',{"last_all_enq":last_all_enq})
     except:
@@ -267,7 +267,7 @@ def saleperson_page(request):
     page_number = request.GET.get('page')
     page_obj_today_follow_up_enq= paginator.get_page(page_number)
     today_follow_up_enq_count = today_follow_up_enq.count()
-    follow_up_enq = Enquiry.objects.filter(username=request.user,Visit_status=5,Follow_up=datetime.datetime.today()+datetime.timedelta(days=2))
+    follow_up_enq = Enquiry.objects.filter(username=request.user,Visit_status=5,Follow_up=datetime.datetime.today()+datetime.timedelta(days=1))
     paginator = Paginator(follow_up_enq,14)
     page_number = request.GET.get('page')
     page_obj_follow_up_enq= paginator.get_page(page_number)
@@ -318,7 +318,11 @@ def salesperson_enq_create(request):
     if request.method == 'POST':
         form = SalespersonEnquiryForm(request.POST)
         if form.is_valid():
-            form.save()
+            enquiry=form.save(commit=False)
+            enquiry.username = request.user
+            enquiry.save()
+            user = form.save()
+            user.username = request.user
             data['form_is_valid'] = True
             page_obj_cold_enq = Enquiry.objects.filter(username=request.user,Visit_status=2)
             page_obj = Enquiry.objects.filter(Visit_status=1,username=request.user)
@@ -389,7 +393,7 @@ def salespersonsearch_enq_month(request):
         qur1 = request.GET.get("search1")
         # print(qur)
         # print(qur1)
-        page_obj_cold_enq = Enquiry.objects.filter(Booking_Date__range=(qur,qur1))
+        page_obj_cold_enq = Enquiry.objects.filter(created_at__range=(qur,qur1))
         # print(last_all_enq)
         return render(request,'Salesperson_Dashboard/salesperson.htm',{"page_obj_cold_enq":page_obj_cold_enq})
     except:
