@@ -22,6 +22,11 @@
     $( "#id_Booking_Date").datepicker();
   });
 
+
+  document.getElementById('id_Visit_status').addEventListener('change', function () {
+    var style = this.value == 5 ? 'block' : 'none';
+    document.getElementById('id_Follow_up').style.display = style;
+});
 </script>
 
 

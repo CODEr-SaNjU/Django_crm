@@ -262,12 +262,13 @@ def saleperson_page(request):
     delivered_enq_count = delivered_enq.count()
 
     today_follow_up_enq = Enquiry.objects.filter(username=request.user,Visit_status=5,Follow_up=datetime.datetime.today())
-    # print(today_follow_up_enq)
     paginator = Paginator(today_follow_up_enq,14)
     page_number = request.GET.get('page')
     page_obj_today_follow_up_enq= paginator.get_page(page_number)
     today_follow_up_enq_count = today_follow_up_enq.count()
-    follow_up_enq = Enquiry.objects.filter(username=request.user,Visit_status=5,Follow_up=datetime.datetime.today()+datetime.timedelta(days=1))
+
+    #future f
+    follow_up_enq = Enquiry.objects.filter(username=request.user,Visit_status=5,Follow_up__gte=datetime.datetime.today()+datetime.timedelta(days=1))
     paginator = Paginator(follow_up_enq,14)
     page_number = request.GET.get('page')
     page_obj_follow_up_enq= paginator.get_page(page_number)
