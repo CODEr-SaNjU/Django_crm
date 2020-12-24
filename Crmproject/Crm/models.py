@@ -64,7 +64,6 @@ class Enquiry(models.Model):
     Visit_status = models.ForeignKey(Client_Visit,on_delete=models.CASCADE,null=True,blank=True,default=2)
     Booking_Date = models.DateField(verbose_name='Booking Date',blank=True,null=True)
     Follow_up = models.DateField(verbose_name='Follow Up Date',blank=True,null=True)
-    enquiry_status_time = models.TextField(max_length=1000,blank=True,null=True)
     remarks  = models.TextField(blank=True,null=True)
     created_at = models.DateField(auto_now_add=True)
 
@@ -72,24 +71,17 @@ class Enquiry(models.Model):
         return self.Enquiry_number
 
 
-# @receiver(post_save,sender=Enquiry)
-# def update_history_field(sender, instance, **kwargs):
-#     if instance.Visit_status:
-#         data = Enquiry.objects.get(pk=instance.id)
-#         print(data)
-#         history = data.enquiry_status_time
-#         print(history)
-#         history.append(instance.Visit_status.name) #field is foreignkey
-#         Enquiry.objects.filter(pk=instance.id).update(enquiry_status_time=history)
 
 
-    # def save(self, *args, **kwargs):
-    #     if self.enquiry_status_time and self.enquiry_status_time is None:
-    #         self.enquiry_status_time = timezone.now()
-    #     elif not self.enquiry_status_time and self.enquiry_status_time is not None:
-    #         self.enquiry_status_time = None
-    #     super(Enquiry, self).save(*args, **kwargs,)
+class History(models.Model):
+    update_by = models.CharField(max_length=100,verbose_name = "Update By" ,blank = True ,null=True)
+    enquiry_number = models.CharField(max_length=100,verbose_name = "Enquiry Number ")
+    Visit_status = models.CharField(max_length=100,verbose_name = "enquiry status")
+    enquiry_status_time = models.DateField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.enquiry_number
 
-    def save(self):
-       super(Enquiry, self).save()
-       Enquiry.objects.update(enquiry_status_time=self.visit_date)
+    # def save(self):
+    #    super(History, self).save()
+    #    History.objects.update(enquiry_status_time=self.visit_date)

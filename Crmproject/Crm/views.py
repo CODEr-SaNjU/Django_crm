@@ -25,7 +25,7 @@ from django.db.models import Q
 import json
 from django.conf import  settings
 from django.urls import reverse_lazy
-from .models import Enquiry,Enquiry_Source,Profession,Client_Visit
+from .models import Enquiry,Enquiry_Source,Profession,Client_Visit ,History
 from django.template.loader import render_to_string
 import datetime 
 import pytz 
@@ -66,19 +66,19 @@ def Admin_panel(request):
         userform = UserForm(request.POST)
     all_user = User.objects.all()
 
-    all_enq = Enquiry.objects.all()
+    all_enq = Enquiry.objects.all().order_by('id')
     paginator = Paginator(all_enq,10)
     page_number = request.GET.get('page')
     page_obj_all_enq= paginator.get_page(page_number)
     total_enquiry_data = all_enq.count()
 
-    assign_enq = Enquiry.objects.filter(username__isnull=False)
+    assign_enq = Enquiry.objects.filter(username__isnull=False).order_by('id')
     paginator = Paginator(assign_enq,10)
     page_number = request.GET.get('page')
     page_obj_assign_enq= paginator.get_page(page_number)
     assign_enq_count = assign_enq.count()
 
-    notassign_enq = Enquiry.objects.filter(username__isnull=True)
+    notassign_enq = Enquiry.objects.filter(username__isnull=True).order_by('id')
     paginator = Paginator(notassign_enq,10)
     page_number = request.GET.get('page')
     page_obj_notassign_enq= paginator.get_page(page_number)
@@ -96,8 +96,6 @@ def search_enq_month(request):
     try:
         qur = request.GET.get('search')
         qur1 = request.GET.get("search1")
-        # print(qur)
-        # print(qur1)
         last_all_enq = Enquiry.objects.filter(created_at__range=(qur,qur1))
         # print(last_all_enq)
         return render(request,'html_files/Main.htm',{"last_all_enq":last_all_enq})
@@ -124,12 +122,12 @@ def save_enq_form(request, form, template_name):
     data = dict()
     if request.method == 'POST':
         if form.is_valid():
-            user = form.save()
-            # IST = pytz.timezone('Asia/Kolkata')
-            # datetime_ist = datetime.now(IST)
-            # x = datetime_ist.strftime('%Y:%m:%d %H:%M:%S %Z %z')
-            # user.enquiry_status_time = request.user.Booking_Date
-            # print("sanju",x)
+            user = form.save(commit=False)
+            user.save()
+            enq_num = user.Enquiry_number
+            vist_status = user.Visit_status
+            user = user.username
+            History.objects.create(update_by=user,enquiry_number= enq_num,Visit_status = vist_status)
             data['form_is_valid'] = True
             last_all_enq = Enquiry.objects.all()
             last_all_enq = Enquiry.objects.filter().order_by('-id')[:10]
@@ -149,7 +147,12 @@ def enq_create(request):
     if request.method == 'POST':
         form = CreateEnquiryForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save(commit=False)
+            user.save()
+            enq_num = user.Enquiry_number
+            vist_status = user.Visit_status
+            user = user.username
+            History.objects.create(update_by=user,enquiry_number= enq_num,Visit_status = vist_status)
             data['form_is_valid'] = True
             last_all_enq = Enquiry.objects.all()
             data['html_enq_list'] = render_to_string('html_files/enq_list.htm',{'last_all_enq':last_all_enq})
@@ -237,38 +240,39 @@ def user_delete(request,pk_id):
 
 @login_required(login_url='login')
 def saleperson_page(request):
-    Hot_enq = Enquiry.objects.filter(Visit_status=1,username=request.user)
+    Hot_enq = Enquiry.objects.filter(Visit_status=1,username=request.user).order_by('id')
     paginator = Paginator(Hot_enq,14)
     page_number = request.GET.get('page')
     page_obj= paginator.get_page(page_number)
     Hot_enq_count = Hot_enq.count()
 
-    cold_enq = Enquiry.objects.filter(username=request.user,Visit_status=2)
+    cold_enq = Enquiry.objects.filter(username=request.user,Visit_status=2).order_by('id')
     paginator = Paginator(cold_enq,14)
     page_number = request.GET.get('page')
     page_obj_cold_enq= paginator.get_page(page_number)
     cold_enq_count = cold_enq.count()
 
-    pending_enq = Enquiry.objects.filter(username=request.user,Visit_status=3)
+    pending_enq = Enquiry.objects.filter(username=request.user,Visit_status=3).order_by('id')
     paginator = Paginator(pending_enq,14)
     page_number = request.GET.get('page')
     page_obj_pending_enq= paginator.get_page(page_number)
     pending_enq_count = pending_enq.count()
 
-    delivered_enq = Enquiry.objects.filter(username=request.user,Visit_status=4)
+    delivered_enq = Enquiry.objects.filter(username=request.user,Visit_status=4).order_by('id')
     paginator = Paginator(delivered_enq,14)
     page_number = request.GET.get('page')
     page_obj_delivered_enq= paginator.get_page(page_number)
     delivered_enq_count = delivered_enq.count()
 
-    today_follow_up_enq = Enquiry.objects.filter(username=request.user,Visit_status=5,Follow_up=datetime.datetime.today())
+  #today follow up code
+    today_follow_up_enq = Enquiry.objects.filter(username=request.user,Visit_status=5,Follow_up=datetime.datetime.today()).order_by('id')
     paginator = Paginator(today_follow_up_enq,14)
     page_number = request.GET.get('page')
     page_obj_today_follow_up_enq= paginator.get_page(page_number)
     today_follow_up_enq_count = today_follow_up_enq.count()
 
-    #future f
-    follow_up_enq = Enquiry.objects.filter(username=request.user,Visit_status=5,Follow_up__gte=datetime.datetime.today()+datetime.timedelta(days=1))
+    #future follow up 
+    follow_up_enq = Enquiry.objects.filter(username=request.user,Visit_status=5,Follow_up__gte=datetime.datetime.today()+datetime.timedelta(days=1)).order_by('id')
     paginator = Paginator(follow_up_enq,14)
     page_number = request.GET.get('page')
     page_obj_follow_up_enq= paginator.get_page(page_number)
@@ -276,7 +280,7 @@ def saleperson_page(request):
 
 
 
-    lost_enq = Enquiry.objects.filter(username=request.user,Visit_status=6)
+    lost_enq = Enquiry.objects.filter(username=request.user,Visit_status=6).order_by('id')
     paginator = Paginator(lost_enq,14)
     page_number = request.GET.get('page')
     page_obj_lost_enq= paginator.get_page(page_number)
@@ -394,9 +398,9 @@ def salespersonsearch_enq_month(request):
         qur1 = request.GET.get("search1")
         # print(qur)
         # print(qur1)
-        page_obj_cold_enq = Enquiry.objects.filter(created_at__range=(qur,qur1))
-        # print(last_all_enq)
-        return render(request,'Salesperson_Dashboard/salesperson.htm',{"page_obj_cold_enq":page_obj_cold_enq})
+        page_obj = Enquiry.objects.filter(created_at__range=(qur,qur1))
+        print(page_obj)
+        return render(request,'Salesperson_Dashboard/salesperson.htm',{"page_obj":page_obj})
     except:
         return redirect('saleperson')
 
