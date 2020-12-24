@@ -59,7 +59,6 @@ class Enquiry(models.Model):
     enquiry_source = models.ForeignKey(Enquiry_Source,on_delete=models.CASCADE,null=True,blank=True )
     expected_purchase_Date = models.DateField(verbose_name='Expected Purchase Date',auto_now_add=False,blank=True,null=True)
     profession = models.ForeignKey(Profession,on_delete=models.CASCADE,null=True,blank=True )
-    visit_date = models.DateTimeField(verbose_name='Visit Date',auto_now=True,blank=True,null=True)
     visited_status = models.IntegerField(choices=STATUS, default=1)
     Visit_status = models.ForeignKey(Client_Visit,on_delete=models.CASCADE,null=True,blank=True,default=2)
     Booking_Date = models.DateField(verbose_name='Booking Date',blank=True,null=True)
