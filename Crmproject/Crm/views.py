@@ -141,21 +141,13 @@ def save_enq_form(request, form, template_name):
 
 @login_required(login_url='login')
 def history_view(request,pk_id):
-    obj_view = get_object_or_404(History,id=pk_id)
+    enq = Enquiry.objects.get(id=pk_id)
+    application_detail = History.objects.filter(Enquiry_number=enq)
+    print(enq)
+    print(application_detail)
     data = dict()
-    enq = Enquiry.objects.all()
-    all_hst = History.objects.filter()
-    return render(request,'html_files/history.htm',{"all_hst":all_hst})
+    return render(request,'html_files/history.htm',{"application_detail":application_detail})
 
-
-    # if request.method == "POST":
-    #     obj_view.delete()
-    #     data['form_is_valid'] = True
-    #     last_all_enq = Enquiry.objects.filter().order_by('-id')[:10]
-    #     data['html_enq_list'] = render_to_string('html_files/enq_list.htm',{'last_all_enq':last_all_enq})
-    # else:
-    #     data['html_form'] = render_to_string('html_files/enquiry_delete.htm', {'obj_view':obj_view}, request=request)
-    # return JsonResponse(data)
 
 @login_required(login_url='login')
 def enq_create(request):

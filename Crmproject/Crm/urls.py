@@ -13,6 +13,7 @@ urlpatterns = [
     path("Enquiry_Update/<str:pk_id>/",views.Enquiry_Update,name="Enquiry_Update"),
     path("Enquiry_Delete/<str:pk_id>/",views.Enquiry_Delete,name="Enquiry_Delete"),
     path("logout/",views.logout,name="logout"),
+    path("history/<str:pk_id>/",views.history_view,name="history"),
     path("user_delete/<str:pk_id>/",views.user_delete,name="user_delete"),
     path("user_update/<str:pk_id>/",views.user_update,name="user_update"),
     path("enq_create/",views.enq_create,name="enq_create"),

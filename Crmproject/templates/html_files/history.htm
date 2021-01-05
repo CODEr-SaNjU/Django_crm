@@ -1,15 +1,24 @@
-<div class="col-14">
-    <table class="table table-hover table-sm" id="table-assenq" style="padding: 100px; font-size: small;">
-      <thead>
-        <tr>
-          <th>Enquiry Number</th>
-          <th>Updtae By</th>
-          <th>status update</th>
-          <th>update time</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% include 'html_files/history_list.htm' %}
-      </tbody>
-    </table>
+{% load widget_tweaks %}
+
+<div class="modal-header">
+  <h3 class="modal-title">Book details</h3>
+  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<div class="modal-body">
+{% for i in application_detail %}
+  <tr style="color: black; font-weight: bold;">
+    <td>{{i.Enquiry_number}}</td>
+    <td>{{i.update_by}}</td>
+    <td>{{i.Visit_status}}</td>
+    <td>{{i.enquiry_status_time}}</td>
+  </tr>
+{% endfor %}
+
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 </div>
