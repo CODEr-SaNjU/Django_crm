@@ -124,10 +124,10 @@ def save_enq_form(request, form, template_name):
         if form.is_valid():
             user = form.save(commit=False)
             user.save()
-            enq_num = user.Enquiry_number
+            Enquiry_number = user
             vist_status = user.Visit_status
             user = user.username
-            History.objects.create(update_by=user,enquiry_number= enq_num,Visit_status = vist_status)
+            History.objects.create(update_by=user,Enquiry_number= Enquiry_number,Visit_status = vist_status)
             data['form_is_valid'] = True
             last_all_enq = Enquiry.objects.all()
             last_all_enq = Enquiry.objects.filter().order_by('-id')[:10]
@@ -139,7 +139,23 @@ def save_enq_form(request, form, template_name):
     return JsonResponse(data)
     # print("sanju herer",data)
 
+@login_required(login_url='login')
+def history_view(request,pk_id):
+    obj_view = get_object_or_404(History,id=pk_id)
+    data = dict()
+    enq = Enquiry.objects.all()
+    all_hst = History.objects.filter()
+    return render(request,'html_files/history.htm',{"all_hst":all_hst})
 
+
+    # if request.method == "POST":
+    #     obj_view.delete()
+    #     data['form_is_valid'] = True
+    #     last_all_enq = Enquiry.objects.filter().order_by('-id')[:10]
+    #     data['html_enq_list'] = render_to_string('html_files/enq_list.htm',{'last_all_enq':last_all_enq})
+    # else:
+    #     data['html_form'] = render_to_string('html_files/enquiry_delete.htm', {'obj_view':obj_view}, request=request)
+    # return JsonResponse(data)
 
 @login_required(login_url='login')
 def enq_create(request):
@@ -149,10 +165,10 @@ def enq_create(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.save()
-            enq_num = user.Enquiry_number
+            Enquiry_number = user
             vist_status = user.Visit_status
             user = user.username
-            History.objects.create(update_by=user,enquiry_number= enq_num,Visit_status = vist_status)
+            History.objects.create(update_by=user,Enquiry_number= Enquiry_number,Visit_status = vist_status)
             data['form_is_valid'] = True
             last_all_enq = Enquiry.objects.all()
             data['html_enq_list'] = render_to_string('html_files/enq_list.htm',{'last_all_enq':last_all_enq})
@@ -173,6 +189,10 @@ def Enquiry_Update(request,pk_id):
     else:
         form = UpdateEnquiryForm(instance=obj_update)
     return save_enq_form(request,form,'html_files/enquiry_update.htm')
+
+
+
+
 
 
 
@@ -375,6 +395,15 @@ def salesperson_Enquiry_Delete(request,pk_id):
     return JsonResponse(data)
 
 
+@login_required(login_url='login')
+def salesenquiry_reports(request):
+    try:
+        featured_filter = request.GET.get('filterstatus')
+        filterdata = Enquiry.objects.filter(Visit_status=featured_filter)
+        total_filterdata_data = filterdata.count()
+        return render(request,'Salesperson_Dashboard/salesperson.htm',{"filterdata":filterdata,"total_filterdata_data":total_filterdata_data})
+    except:
+        return redirect('saleperson')
 
 
 

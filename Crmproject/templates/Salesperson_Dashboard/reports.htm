@@ -1,0 +1,73 @@
+{% block content %}
+<style>
+  option{
+    font-weight:bold;
+  }
+</style>
+<div class="col-14">
+  <button type="button" class="btn btn-primary btn-sm btn-block" style="margin-top: -13px;" >Reports</button>
+  <hr class="my-4">
+    <form action="{% url 'salesenquiry_reports' %}" method="GET">
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="filtereports" style="font-weight:bold;" >Enquiry Status</label>
+          <select class="form-control form-control-md" d="filtereports" name="filterstatus" required style="font-weight:bold;">
+            <option selected>select status</option>
+            <option value="1">Hot</option>
+            <option value="2">Cold</option>
+            <option value="3">Pending</option>
+            <option value="4">Delivered</option>
+            <option value="5">Follow up</option>
+            <option value="6">Lost</option>
+          </select>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="filter" style="font-weight:bold;" >time</label>
+          <input type="date" id="filter" class="form-control form-control-md"></input>
+        </div>
+        <div class="form-group ">
+          <button type="submit" class="btn btn-info form-control form-control-md">filter</button>
+        </div>
+      </div>
+    </form>
+    <h5 style="font-weight: 900;">total Enquiry {{total_filterdata_data}}</h5>
+    <table class="table table-hover table-sm" id="table-coldenq" style="padding: 100px; font-size: small;">
+      <thead>
+        <tr>
+          <th>Enquiry Number</th>
+          <th>Name</th>
+          <th>Company Name</th>
+          <th>City</th>
+          <th>State</th>
+          <th>Contact Number</th>
+          <th>Email</th>
+          <th>status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in filterdata %}
+        <tr style="color: black; font-weight: bold;">
+          <td>{{i.Enquiry_number}}</td>
+          <td>{{i.Name}}</td>
+          <td>{{i.Company_name|safe|truncatechars:"7"|linebreaks}}</td>
+          <td>{{i.City|safe|truncatechars:"20"|linebreaks}}</td>
+          <td>{{i.State|safe|truncatechars:"20"|linebreaks}}</td>
+          <td>{{i.Contact_number}}</td>
+          <td>{{i.Email|truncatechars:"20"|linebreaks}}</td>
+          <td>{{i.username}}</td>
+          <td>
+            <button type="button"  class="btn btn-warning btn-sm  js-update-enq" data-url="{% url 'Enquiry_Update' i.id %}"><i class="fa fa-plus" aria-hidden="true"></i></button>
+            <button type="button"  class="btn btn-danger btn-sm  js-delete-enq"   data-url="{% url 'Enquiry_Delete' i.id %}"><i class="fa fa-trash" aria-hidden="true"></i></button>
+            <a href="#" ><button type="button" class="btn btn-info btn-sm" ><i class="fa fa-info" aria-hidden="true"></i></button></a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="12" class="text-center bg-warning">No Enquiry Found</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+{% endblock %}

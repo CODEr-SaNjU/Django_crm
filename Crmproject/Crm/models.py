@@ -74,12 +74,12 @@ class Enquiry(models.Model):
 
 class History(models.Model):
     update_by = models.CharField(max_length=100,verbose_name = "Update By" ,blank = True ,null=True)
-    enquiry_number = models.CharField(max_length=100,verbose_name = "Enquiry Number ")
+    Enquiry_number = models.ForeignKey(Enquiry,verbose_name = "Enquiry Number ",on_delete=models.CASCADE,null=True,blank=True)
     Visit_status = models.CharField(max_length=100,verbose_name = "enquiry status")
-    enquiry_status_time = models.DateField(auto_now_add=True)
+    enquiry_status_time = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return self.enquiry_number
+        return self.update_by
 
     # def save(self):
     #    super(History, self).save()

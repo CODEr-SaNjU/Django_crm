@@ -75,3 +75,16 @@ class UserForm(UserCreationForm):
         labels = {
             'first_name': ('full Name')
         }
+
+
+
+
+
+# class reportsfilterForm(forms.ModelForm):
+#   class Meta:
+#     model = Enquiry
+#     fields = ['Visit_status']
+#     labels = {
+#       'Visit_status': ('Enquiry status')
+#     }
+    

@@ -16,6 +16,7 @@ urlpatterns = [
     path("user_delete/<str:pk_id>/",views.user_delete,name="user_delete"),
     path("user_update/<str:pk_id>/",views.user_update,name="user_update"),
     path("enq_create/",views.enq_create,name="enq_create"),
+    path("salesperson/salesenquiry_reports/",views.salesenquiry_reports,name = "salesenquiry_reports"),
     path("salesperson/",views.saleperson_page,name="saleperson"),
     path("salesperson/salespersonsearch_enq_month/",views.salespersonsearch_enq_month,name="salespersonsearch_enq_month"),
     path('csv_Files_import/',views.csv_Files_import,name="csv_Files_import"),
