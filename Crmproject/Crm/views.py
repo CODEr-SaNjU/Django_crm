@@ -8,6 +8,8 @@ from django.http import Http404, HttpResponse
 from django.contrib.auth.models import AbstractBaseUser, UserManager
 from django.contrib import messages
 import csv,io
+from django.forms.models import model_to_dict
+
 from django.contrib.auth import authenticate,get_user_model
 from django.contrib import auth 
 from django.contrib.auth import update_session_auth_hash
@@ -139,15 +141,16 @@ def save_enq_form(request, form, template_name):
     return JsonResponse(data)
     # print("sanju herer",data)
 
+
+
+
 @login_required(login_url='login')
 def history_view(request,pk_id):
+    data = dict()
     enq = Enquiry.objects.get(id=pk_id)
     application_detail = History.objects.filter(Enquiry_number=enq)
-    print(enq)
-    print(application_detail)
-    data = dict()
-    return render(request,'html_files/history.htm',{"application_detail":application_detail})
-
+    data['html_form'] = render_to_string('html_files/history.htm',{"application_detail":application_detail},request=request)
+    return JsonResponse(data)
 
 @login_required(login_url='login')
 def enq_create(request):

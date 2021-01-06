@@ -1,8 +1,26 @@
-{% for i in application_detail %}
-<tr style="color: black; font-weight: bold;">
-  <td>{{i.Enquiry_number}}</td>
-  <td>{{i.update_by}}</td>
-  <td>{{i.Visit_status}}</td>
-  <td>{{i.enquiry_status_time}}</td>
-</tr>
-{% endfor %}
+<div class="col-14">
+  <table class="table table-hover table-sm" id="table-pendingenq" style="padding: 100px; font-size: small;">
+    <thead>
+      <tr>
+        <th>Enquiry Number</th>
+        <th>update By</th>
+        <th>Visit Status</th>
+        <th>Enquiry Status Time</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for i in application_detail %}
+      <tr style="color: black; font-weight: bold;">
+        <td>{{i.Enquiry_number}}</td>
+        <td>{{i.update_by}}</td>
+        <td>{{i.Visit_status}}</td>
+        <td>{{i.enquiry_status_time}}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="12" class="text-center bg-warning">No History Found</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
