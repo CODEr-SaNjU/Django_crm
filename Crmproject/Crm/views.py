@@ -126,10 +126,11 @@ def save_enq_form(request, form, template_name):
         if form.is_valid():
             user = form.save(commit=False)
             user.save()
+            rmrks = user.remarks
             Enquiry_number = user
             vist_status = user.Visit_status
             user = user.username
-            History.objects.create(update_by=user,Enquiry_number= Enquiry_number,Visit_status = vist_status)
+            History.objects.create(update_by=user,Enquiry_number= Enquiry_number,Visit_status = vist_status,remarks=rmrks)
             data['form_is_valid'] = True
             last_all_enq = Enquiry.objects.all()
             last_all_enq = Enquiry.objects.filter().order_by('-id')[:10]
@@ -163,7 +164,7 @@ def enq_create(request):
             Enquiry_number = user
             vist_status = user.Visit_status
             user = user.username
-            History.objects.create(update_by=user,Enquiry_number= Enquiry_number,Visit_status = vist_status)
+            History.objects.create(update_by=user,Enquiry_number= Enquiry_number,Visit_status = vist_status,)
             data['form_is_valid'] = True
             last_all_enq = Enquiry.objects.all()
             data['html_enq_list'] = render_to_string('html_files/enq_list.htm',{'last_all_enq':last_all_enq})
@@ -184,6 +185,7 @@ def Enquiry_Update(request,pk_id):
     else:
         form = UpdateEnquiryForm(instance=obj_update)
     return save_enq_form(request,form,'html_files/enquiry_update.htm')
+    
 
 
 

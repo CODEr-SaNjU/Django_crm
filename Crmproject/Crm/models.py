@@ -49,7 +49,7 @@ Enquiry_number=(''.join(random.choice(letters) for i in range(10)) )
 class Enquiry(models.Model):
     username = models.ForeignKey(User, verbose_name='username', on_delete=models.CASCADE ,blank=True,null=True )
     Enquiry_number = models.CharField(max_length=100, blank=True, unique=True, default=Enquiry_number)
-    Contact_number = models.CharField(max_length=13,unique=True,validators=[RegexValidator(r'^\d{1,10}$')])
+    Contact_number = models.CharField(max_length=13,unique=True)
     Email = models.CharField(max_length=100,) 
     Name = models.CharField(max_length=100,) 
     Company_name = models.CharField(max_length=500,)
@@ -74,12 +74,13 @@ class Enquiry(models.Model):
 
 class History(models.Model):
     update_by = models.CharField(max_length=100,verbose_name = "Update By" ,blank = True ,null=True)
+    remarks = models.TextField(blank=True,null=True)
     Enquiry_number = models.ForeignKey(Enquiry,verbose_name = "Enquiry Number ",on_delete=models.CASCADE,null=True,blank=True)
     Visit_status = models.CharField(max_length=100,verbose_name = "enquiry status")
     enquiry_status_time = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return self.update_by
+        return self.Visit_status
 
     # def save(self):
     #    super(History, self).save()
