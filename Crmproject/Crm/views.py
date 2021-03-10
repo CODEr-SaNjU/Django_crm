@@ -1,54 +1,56 @@
-from django.shortcuts import render,redirect , get_object_or_404
-from django.contrib.auth.models import User,auth ,Group
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.models import User, auth, Group
 from django.http import Http404, HttpResponse
 from django.core.files.storage import FileSystemStorage
-from django.shortcuts import render,redirect , get_object_or_404
-from django.contrib.auth.models import User,auth ,Group
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.models import User, auth, Group
 from django.http import Http404, HttpResponse
 from django.contrib.auth.models import AbstractBaseUser, UserManager
 from django.contrib import messages
-import csv,io
+import csv
+import io
 from django.forms.models import model_to_dict
 
-from django.contrib.auth import authenticate,get_user_model
-from django.contrib import auth 
+from django.contrib.auth import authenticate, get_user_model
+from django.contrib import auth
 from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.decorators import login_required,permission_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from . decorators import unauthenticated_user ,allowed_user ,admin_only  
+from . decorators import unauthenticated_user, allowed_user, admin_only
 from django.contrib.auth.forms import UserCreationForm
-from django.core.paginator import PageNotAnInteger,EmptyPage,Paginator
+from django.core.paginator import PageNotAnInteger, EmptyPage, Paginator
 import os
 from django.http import JsonResponse
-from . forms import UserForm ,SalespersonEnquiryForm ,CreateEnquiryForm ,UpdateEnquiryForm , salespersonUpdateEnquiryForm,salespersonstatusEnquiryForm
+from . forms import UserForm, SalespersonEnquiryForm, CreateEnquiryForm, UpdateEnquiryForm, salespersonUpdateEnquiryForm, salespersonstatusEnquiryForm
 import requests
 from django.db.models import Q
 import json
-from django.conf import  settings
+from django.conf import settings
 from django.urls import reverse_lazy
-from .models import Enquiry,Enquiry_Source,Profession,Client_Visit ,History
+from .models import Enquiry, Enquiry_Source, Profession, Client_Visit, History
 from django.template.loader import render_to_string
-import datetime 
-import pytz 
-
+import datetime
+import pytz
 
 
 @unauthenticated_user
 def login(request):
     if request.method == "POST":
         email = request.POST['email']
-        password = request.POST['password']   
-        user = auth.authenticate(username=email,password=password)
+        password = request.POST['password']
+        user = auth.authenticate(username=email, password=password)
         if user is not None:
-            auth.login(request,user)
+            auth.login(request, user)
             return redirect('Admin_panel')
         else:
-            messages.error(request, 'Error! please enter the correct  Username and Password for a staff account.')
-            return render(request,'html_files/login.htm')
+            messages.error(
+                request, 'Error! please enter the correct  Username and Password for a staff account.')
+            return render(request, 'html_files/login.htm')
 
     else:
-        return render(request,"html_files/login.htm")
+        return render(request, "html_files/login.htm")
+
 
 @login_required(login_url='login')
 def logout(request):
@@ -63,34 +65,34 @@ def Admin_panel(request):
         userform = UserForm(request.POST)
         if userform.is_valid():
             user = userform.save()
-            messages.success(request, f'Registration complete! You may log in!')
+            messages.success(
+                request, f'Registration complete! You may log in!')
     else:
         userform = UserForm(request.POST)
     all_user = User.objects.all()
 
     all_enq = Enquiry.objects.all().order_by('id')
-    paginator = Paginator(all_enq,10)
+    paginator = Paginator(all_enq, 10)
     page_number = request.GET.get('page')
-    page_obj_all_enq= paginator.get_page(page_number)
+    page_obj_all_enq = paginator.get_page(page_number)
     total_enquiry_data = all_enq.count()
 
     assign_enq = Enquiry.objects.filter(username__isnull=False).order_by('id')
-    paginator = Paginator(assign_enq,10)
+    paginator = Paginator(assign_enq, 10)
     page_number = request.GET.get('page')
-    page_obj_assign_enq= paginator.get_page(page_number)
+    page_obj_assign_enq = paginator.get_page(page_number)
     assign_enq_count = assign_enq.count()
 
-    notassign_enq = Enquiry.objects.filter(username__isnull=True).order_by('id')
-    paginator = Paginator(notassign_enq,10)
+    notassign_enq = Enquiry.objects.filter(
+        username__isnull=True).order_by('id')
+    paginator = Paginator(notassign_enq, 10)
     page_number = request.GET.get('page')
-    page_obj_notassign_enq= paginator.get_page(page_number)
+    page_obj_notassign_enq = paginator.get_page(page_number)
     notassign_enq_count = notassign_enq.count()
     last_all_enq = Enquiry.objects.filter().order_by('-id')[:14]
     all_enq_in_ascending_order = reversed(last_all_enq)
 
-    return render(request,'html_files/Main.htm',{'last_all_enq':last_all_enq,'total_enquiry_data':total_enquiry_data,'page_obj_all_enq':page_obj_all_enq,'userform': userform, 'all_user':all_user,'page_obj_assign_enq':page_obj_assign_enq,'page_obj_notassign_enq':page_obj_notassign_enq,'assign_enq_count':assign_enq_count,'notassign_enq_count':notassign_enq_count})
-
-
+    return render(request, 'html_files/Main.htm', {'last_all_enq': last_all_enq, 'total_enquiry_data': total_enquiry_data, 'page_obj_all_enq': page_obj_all_enq, 'userform': userform, 'all_user': all_user, 'page_obj_assign_enq': page_obj_assign_enq, 'page_obj_notassign_enq': page_obj_notassign_enq, 'assign_enq_count': assign_enq_count, 'notassign_enq_count': notassign_enq_count})
 
 
 @login_required(login_url='login')
@@ -98,12 +100,11 @@ def search_enq_month(request):
     try:
         qur = request.GET.get('search')
         qur1 = request.GET.get("search1")
-        last_all_enq = Enquiry.objects.filter(created_at__range=(qur,qur1))
+        last_all_enq = Enquiry.objects.filter(created_at__range=(qur, qur1))
         # print(last_all_enq)
-        return render(request,'html_files/Main.htm',{"last_all_enq":last_all_enq})
+        return render(request, 'html_files/Main.htm', {"last_all_enq": last_all_enq})
     except:
         return redirect('Admin_panel')
-
 
 
 @login_required(login_url='login')
@@ -111,12 +112,11 @@ def search_enq_month(request):
 def Enquiry_search(request):
     try:
         qur = request.GET.get('search')
-        last_all_enq = Enquiry.objects.filter(Q(Name__icontains=qur) | Q(Enquiry_number__icontains=qur) | Q(State__icontains=qur) )
-        return render(request,'html_files/Main.htm',{"last_all_enq":last_all_enq})
+        last_all_enq = Enquiry.objects.filter(Q(Name__icontains=qur) | Q(
+            Enquiry_number__icontains=qur) | Q(State__icontains=qur))
+        return render(request, 'html_files/Main.htm', {"last_all_enq": last_all_enq})
     except:
         return redirect('Admin_panel')
-
-  
 
 
 @login_required(login_url='login')
@@ -130,28 +130,31 @@ def save_enq_form(request, form, template_name):
             Enquiry_number = user
             vist_status = user.Visit_status
             user = user.username
-            History.objects.create(update_by=user,Enquiry_number= Enquiry_number,Visit_status = vist_status,remarks=rmrks)
+            History.objects.create(
+                update_by=user, Enquiry_number=Enquiry_number, Visit_status=vist_status, remarks=rmrks)
             data['form_is_valid'] = True
             last_all_enq = Enquiry.objects.all()
             last_all_enq = Enquiry.objects.filter().order_by('-id')[:10]
-            data['html_enq_list'] = render_to_string('html_files/enq_list.htm',{'last_all_enq':last_all_enq})
+            data['html_enq_list'] = render_to_string(
+                'html_files/enq_list.htm', {'last_all_enq': last_all_enq})
         else:
             data['form_is_valid'] = False
     context = {'form': form}
-    data['html_form'] = render_to_string(template_name, context, request=request)
+    data['html_form'] = render_to_string(
+        template_name, context, request=request)
     return JsonResponse(data)
     # print("sanju herer",data)
 
 
-
-
 @login_required(login_url='login')
-def history_view(request,pk_id):
+def history_view(request, pk_id):
     data = dict()
     enq = Enquiry.objects.get(id=pk_id)
     application_detail = History.objects.filter(Enquiry_number=enq)
-    data['html_form'] = render_to_string('html_files/history.htm',{"application_detail":application_detail},request=request)
+    data['html_form'] = render_to_string(
+        'html_files/history.htm', {"application_detail": application_detail}, request=request)
     return JsonResponse(data)
+
 
 @login_required(login_url='login')
 def enq_create(request):
@@ -164,48 +167,46 @@ def enq_create(request):
             Enquiry_number = user
             vist_status = user.Visit_status
             user = user.username
-            History.objects.create(update_by=user,Enquiry_number= Enquiry_number,Visit_status = vist_status,)
+            History.objects.create(
+                update_by=user, Enquiry_number=Enquiry_number, Visit_status=vist_status,)
             data['form_is_valid'] = True
             last_all_enq = Enquiry.objects.all()
-            data['html_enq_list'] = render_to_string('html_files/enq_list.htm',{'last_all_enq':last_all_enq})
+            data['html_enq_list'] = render_to_string(
+                'html_files/enq_list.htm', {'last_all_enq': last_all_enq})
         else:
-            data['form_is_valid'] =False
+            data['form_is_valid'] = False
     else:
         form = CreateEnquiryForm()
-    context={'form':form}
-    data['html_form']  = render_to_string('html_files/add_enq.htm',context,request=request)
+    context = {'form': form}
+    data['html_form'] = render_to_string(
+        'html_files/add_enq.htm', context, request=request)
     return JsonResponse(data)
 
 
 @login_required(login_url='login')
-def Enquiry_Update(request,pk_id):
-    obj_update = get_object_or_404(Enquiry,id=pk_id)
-    if request.method=="POST":
+def Enquiry_Update(request, pk_id):
+    obj_update = get_object_or_404(Enquiry, id=pk_id)
+    if request.method == "POST":
         form = UpdateEnquiryForm(request.POST, instance=obj_update)
     else:
         form = UpdateEnquiryForm(instance=obj_update)
-    return save_enq_form(request,form,'html_files/enquiry_update.htm')
-    
-
-
-
-
-
+    return save_enq_form(request, form, 'html_files/enquiry_update.htm')
 
 
 @login_required(login_url='login')
-def Enquiry_Delete(request,pk_id):
-    obj_delete = get_object_or_404(Enquiry,id=pk_id)
+def Enquiry_Delete(request, pk_id):
+    obj_delete = get_object_or_404(Enquiry, id=pk_id)
     data = dict()
     if request.method == "POST":
         obj_delete.delete()
         data['form_is_valid'] = True
         last_all_enq = Enquiry.objects.filter().order_by('-id')[:10]
-        data['html_enq_list'] = render_to_string('html_files/enq_list.htm',{'last_all_enq':last_all_enq})
+        data['html_enq_list'] = render_to_string(
+            'html_files/enq_list.htm', {'last_all_enq': last_all_enq})
     else:
-        data['html_form'] = render_to_string('html_files/enquiry_delete.htm', {'obj_delete':obj_delete}, request=request)
+        data['html_form'] = render_to_string(
+            'html_files/enquiry_delete.htm', {'obj_delete': obj_delete}, request=request)
     return JsonResponse(data)
-
 
 
 @login_required(login_url='login')
@@ -216,98 +217,95 @@ def save_user_form(request, form, template_name):
             form.save()
             data['form_is_valid'] = True
             all_user = User.objects.all()
-            data['html_user_list'] = render_to_string('html_files/all_user_list.htm',{'all_user':all_user})
+            data['html_user_list'] = render_to_string(
+                'html_files/all_user_list.htm', {'all_user': all_user})
         else:
             data['form_is_valid'] = False
     context = {'form': form}
-    data['html_form'] = render_to_string(template_name, context, request=request)
-    return JsonResponse(data) 
-
-
-
-
-@login_required(login_url='login')
-def user_update(request,pk_id):
-    user_update = get_object_or_404(User,id=pk_id)
-    if request.method=="POST":
-        form = UserForm(request.POST, instance=user_update)
-    else:
-        form = UserForm(instance=user_update)
-    return save_user_form(request,form,'html_files/user_update.htm')
-
-
-
-@login_required(login_url='login')
-def user_delete(request,pk_id):
-    user_delete = get_object_or_404(User,id=pk_id)
-    data = dict()
-    if request.method=="POST":
-        user_delete.delete()
-        data['form_is_valid'] = True
-        all_user = User.objects.all()
-        data['html_user_list'] = render_to_string('html_files/all_user_list.htm',{'all_user':all_user})
-    else:
-        data['html_form'] = render_to_string('html_files/user_delete.htm', {'user_delete':user_delete}, request=request)
+    data['html_form'] = render_to_string(
+        template_name, context, request=request)
     return JsonResponse(data)
 
 
+@login_required(login_url='login')
+def user_update(request, pk_id):
+    user_update = get_object_or_404(User, id=pk_id)
+    if request.method == "POST":
+        form = UserForm(request.POST, instance=user_update)
+    else:
+        form = UserForm(instance=user_update)
+    return save_user_form(request, form, 'html_files/user_update.htm')
 
 
+@login_required(login_url='login')
+def user_delete(request, pk_id):
+    user_delete = get_object_or_404(User, id=pk_id)
+    data = dict()
+    if request.method == "POST":
+        user_delete.delete()
+        data['form_is_valid'] = True
+        all_user = User.objects.all()
+        data['html_user_list'] = render_to_string(
+            'html_files/all_user_list.htm', {'all_user': all_user})
+    else:
+        data['html_form'] = render_to_string(
+            'html_files/user_delete.htm', {'user_delete': user_delete}, request=request)
+    return JsonResponse(data)
 
 
 @login_required(login_url='login')
 def saleperson_page(request):
-    Hot_enq = Enquiry.objects.filter(Visit_status=1,username=request.user).order_by('id')
-    paginator = Paginator(Hot_enq,14)
+    Hot_enq = Enquiry.objects.filter(
+        Visit_status=7, username=request.user).order_by('id')
+    paginator = Paginator(Hot_enq, 14)
     page_number = request.GET.get('page')
-    page_obj= paginator.get_page(page_number)
+    page_obj = paginator.get_page(page_number)
     Hot_enq_count = Hot_enq.count()
 
-    cold_enq = Enquiry.objects.filter(username=request.user,Visit_status=2).order_by('id')
-    paginator = Paginator(cold_enq,14)
+    cold_enq = Enquiry.objects.filter(
+        username=request.user, Visit_status=8).order_by('id')
+    paginator = Paginator(cold_enq, 14)
     page_number = request.GET.get('page')
-    page_obj_cold_enq= paginator.get_page(page_number)
+    page_obj_cold_enq = paginator.get_page(page_number)
     cold_enq_count = cold_enq.count()
 
-    pending_enq = Enquiry.objects.filter(username=request.user,Visit_status=3).order_by('id')
-    paginator = Paginator(pending_enq,14)
+    pending_enq = Enquiry.objects.filter(
+        username=request.user, Visit_status=9).order_by('id')
+    paginator = Paginator(pending_enq, 14)
     page_number = request.GET.get('page')
-    page_obj_pending_enq= paginator.get_page(page_number)
+    page_obj_pending_enq = paginator.get_page(page_number)
     pending_enq_count = pending_enq.count()
 
-    delivered_enq = Enquiry.objects.filter(username=request.user,Visit_status=4).order_by('id')
-    paginator = Paginator(delivered_enq,14)
+    delivered_enq = Enquiry.objects.filter(
+        username=request.user, Visit_status=10).order_by('id')
+    paginator = Paginator(delivered_enq, 14)
     page_number = request.GET.get('page')
-    page_obj_delivered_enq= paginator.get_page(page_number)
+    page_obj_delivered_enq = paginator.get_page(page_number)
     delivered_enq_count = delivered_enq.count()
 
-  #today follow up code
-    today_follow_up_enq = Enquiry.objects.filter(username=request.user,Visit_status=5,Follow_up=datetime.datetime.today()).order_by('id')
-    paginator = Paginator(today_follow_up_enq,14)
+  # today follow up code
+    today_follow_up_enq = Enquiry.objects.filter(
+        username=request.user, Visit_status=11, Follow_up=datetime.datetime.today()).order_by('id')
+    paginator = Paginator(today_follow_up_enq, 14)
     page_number = request.GET.get('page')
-    page_obj_today_follow_up_enq= paginator.get_page(page_number)
+    page_obj_today_follow_up_enq = paginator.get_page(page_number)
     today_follow_up_enq_count = today_follow_up_enq.count()
 
-    #future follow up 
-    follow_up_enq = Enquiry.objects.filter(username=request.user,Visit_status=5,Follow_up__gte=datetime.datetime.today()+datetime.timedelta(days=1)).order_by('id')
-    paginator = Paginator(follow_up_enq,14)
+    # future follow up
+    follow_up_enq = Enquiry.objects.filter(username=request.user, Visit_status=11,
+                                           Follow_up__gte=datetime.datetime.today()+datetime.timedelta(days=1)).order_by('id')
+    paginator = Paginator(follow_up_enq, 14)
     page_number = request.GET.get('page')
-    page_obj_follow_up_enq= paginator.get_page(page_number)
+    page_obj_follow_up_enq = paginator.get_page(page_number)
     follow_up_enq_count = follow_up_enq.count()
 
-
-
-    lost_enq = Enquiry.objects.filter(username=request.user,Visit_status=6).order_by('id')
-    paginator = Paginator(lost_enq,14)
+    lost_enq = Enquiry.objects.filter(
+        username=request.user, Visit_status=12).order_by('id')
+    paginator = Paginator(lost_enq, 14)
     page_number = request.GET.get('page')
-    page_obj_lost_enq= paginator.get_page(page_number)
+    page_obj_lost_enq = paginator.get_page(page_number)
     lost_enq_count = lost_enq.count()
-    return render(request,'Salesperson_Dashboard/salesperson.htm',{'page_obj':page_obj,'Hot_enq_count':Hot_enq_count,'page_obj_cold_enq':page_obj_cold_enq,'cold_enq_count':cold_enq_count,'page_obj_pending_enq':page_obj_pending_enq,'pending_enq_count':pending_enq_count,'delivered_enq_count':delivered_enq_count,'page_obj_delivered_enq':page_obj_delivered_enq,'lost_enq_count':lost_enq_count,'page_obj_lost_enq':page_obj_lost_enq,'page_obj_follow_up_enq':page_obj_follow_up_enq,'follow_up_enq_count':follow_up_enq_count,'today_follow_up_enq':today_follow_up_enq})
-
-
-
-
-
+    return render(request, 'Salesperson_Dashboard/salesperson.htm', {'page_obj': page_obj, 'Hot_enq_count': Hot_enq_count, 'page_obj_cold_enq': page_obj_cold_enq, 'cold_enq_count': cold_enq_count, 'page_obj_pending_enq': page_obj_pending_enq, 'pending_enq_count': pending_enq_count, 'delivered_enq_count': delivered_enq_count, 'page_obj_delivered_enq': page_obj_delivered_enq, 'lost_enq_count': lost_enq_count, 'page_obj_lost_enq': page_obj_lost_enq, 'page_obj_follow_up_enq': page_obj_follow_up_enq, 'follow_up_enq_count': follow_up_enq_count, 'today_follow_up_enq': today_follow_up_enq})
 
 
 @login_required(login_url='login')
@@ -317,21 +315,24 @@ def salesperson_save_enq_form(request, form, template_name):
         if form.is_valid():
             form.save()
             data['form_is_valid'] = True
-            page_obj_cold_enq = Enquiry.objects.filter(username=request.user,Visit_status=2)
-            page_obj = Enquiry.objects.filter(Visit_status=1,username=request.user)
-            page_obj_pending_enq = Enquiry.objects.filter(username=request.user,Visit_status=3)
-            page_obj_delivered_enq = Enquiry.objects.filter(username=request.user,Visit_status=4)
-            page_obj_lost_enq = Enquiry.objects.filter(username=request.user,Visit_status=6)
-            data['html_enq_list'] = render_to_string('Salesperson_Dashboard/cold_list.htm',{'page_obj_cold_enq':page_obj_cold_enq,'page_obj':page_obj,'page_obj_pending_enq':page_obj_pending_enq,'page_obj_delivered_enq':page_obj_delivered_enq,'page_obj_lost_enq':page_obj_lost_enq})
+            page_obj_cold_enq = Enquiry.objects.filter(
+                username=request.user, Visit_status=2)
+            page_obj = Enquiry.objects.filter(
+                Visit_status=1, username=request.user)
+            page_obj_pending_enq = Enquiry.objects.filter(
+                username=request.user, Visit_status=3)
+            page_obj_delivered_enq = Enquiry.objects.filter(
+                username=request.user, Visit_status=4)
+            page_obj_lost_enq = Enquiry.objects.filter(
+                username=request.user, Visit_status=6)
+            data['html_enq_list'] = render_to_string('Salesperson_Dashboard/cold_list.htm', {'page_obj_cold_enq': page_obj_cold_enq, 'page_obj': page_obj,
+                                                                                             'page_obj_pending_enq': page_obj_pending_enq, 'page_obj_delivered_enq': page_obj_delivered_enq, 'page_obj_lost_enq': page_obj_lost_enq})
         else:
             data['form_is_valid'] = False
     context = {'form': form}
-    data['html_form'] = render_to_string(template_name, context, request=request)
+    data['html_form'] = render_to_string(
+        template_name, context, request=request)
     return JsonResponse(data)
-
-
-
-
 
 
 @login_required(login_url='login')
@@ -340,55 +341,67 @@ def salesperson_enq_create(request):
     if request.method == 'POST':
         form = SalespersonEnquiryForm(request.POST)
         if form.is_valid():
-            enquiry=form.save(commit=False)
+            enquiry = form.save(commit=False)
             enquiry.username = request.user
             enquiry.save()
             user = form.save()
             user.username = request.user
             data['form_is_valid'] = True
-            page_obj_cold_enq = Enquiry.objects.filter(username=request.user,Visit_status=2)
-            page_obj = Enquiry.objects.filter(Visit_status=1,username=request.user)
-            page_obj_pending_enq = Enquiry.objects.filter(username=request.user,Visit_status=3)
-            page_obj_delivered_enq = Enquiry.objects.filter(username=request.user,Visit_status=4)
-            page_obj_lost_enq = Enquiry.objects.filter(username=request.user,Visit_status=5)
-            data['html_enq_list'] = render_to_string('Salesperson_Dashboard/cold_list.htm',{'page_obj_cold_enq':page_obj_cold_enq,'page_obj':page_obj,'page_obj_pending_enq':page_obj_pending_enq,'page_obj_delivered_enq':page_obj_delivered_enq,'page_obj_lost_enq':page_obj_lost_enq})
+            page_obj_cold_enq = Enquiry.objects.filter(
+                username=request.user, Visit_status=2)
+            page_obj = Enquiry.objects.filter(
+                Visit_status=1, username=request.user)
+            page_obj_pending_enq = Enquiry.objects.filter(
+                username=request.user, Visit_status=3)
+            page_obj_delivered_enq = Enquiry.objects.filter(
+                username=request.user, Visit_status=4)
+            page_obj_lost_enq = Enquiry.objects.filter(
+                username=request.user, Visit_status=5)
+            data['html_enq_list'] = render_to_string('Salesperson_Dashboard/cold_list.htm', {'page_obj_cold_enq': page_obj_cold_enq, 'page_obj': page_obj,
+                                                                                             'page_obj_pending_enq': page_obj_pending_enq, 'page_obj_delivered_enq': page_obj_delivered_enq, 'page_obj_lost_enq': page_obj_lost_enq})
         else:
-            data['form_is_valid'] =False
+            data['form_is_valid'] = False
     else:
         form = SalespersonEnquiryForm()
-    context={'form':form}
-    data['html_form']  = render_to_string('Salesperson_Dashboard/add_enq.htm',context,request=request)
+    context = {'form': form}
+    data['html_form'] = render_to_string(
+        'Salesperson_Dashboard/add_enq.htm', context, request=request)
     return JsonResponse(data)
 
 
 @login_required(login_url='login')
-def salesperson_Enquiry_Update(request,pk_id):
-    obj_update = get_object_or_404(Enquiry,id=pk_id)
-    if request.method=="POST":
+def salesperson_Enquiry_Update(request, pk_id):
+    obj_update = get_object_or_404(Enquiry, id=pk_id)
+    if request.method == "POST":
         form = salespersonUpdateEnquiryForm(request.POST, instance=obj_update)
     else:
         form = salespersonUpdateEnquiryForm(instance=obj_update)
-    return salesperson_save_enq_form(request,form,'Salesperson_Dashboard/salesenq_update.htm')
-
-
+    return salesperson_save_enq_form(request, form, 'Salesperson_Dashboard/salesenq_update.htm')
 
 
 @login_required(login_url='login')
 @login_required(login_url='login')
-def salesperson_Enquiry_Delete(request,pk_id):
-    obj_delete = get_object_or_404(Enquiry,id=pk_id)
+def salesperson_Enquiry_Delete(request, pk_id):
+    obj_delete = get_object_or_404(Enquiry, id=pk_id)
     data = dict()
     if request.method == "POST":
         obj_delete.delete()
         data['form_is_valid'] = True
-        page_obj_cold_enq = Enquiry.objects.filter(username=request.user,Visit_status=2)
-        page_obj = Enquiry.objects.filter(Visit_status=1,username=request.user)
-        page_obj_pending_enq = Enquiry.objects.filter(username=request.user,Visit_status=3)
-        page_obj_delivered_enq = Enquiry.objects.filter(username=request.user,Visit_status=4)
-        page_obj_lost_enq = Enquiry.objects.filter(username=request.user,Visit_status=5)
-        data['html_enq_list'] = render_to_string('Salesperson_Dashboard/cold_list.htm',{'page_obj_cold_enq':page_obj_cold_enq,'page_obj':page_obj,'page_obj_pending_enq':page_obj_pending_enq,'page_obj_delivered_enq':page_obj_delivered_enq,'page_obj_lost_enq':page_obj_lost_enq})
+        page_obj_cold_enq = Enquiry.objects.filter(
+            username=request.user, Visit_status=2)
+        page_obj = Enquiry.objects.filter(
+            Visit_status=1, username=request.user)
+        page_obj_pending_enq = Enquiry.objects.filter(
+            username=request.user, Visit_status=3)
+        page_obj_delivered_enq = Enquiry.objects.filter(
+            username=request.user, Visit_status=4)
+        page_obj_lost_enq = Enquiry.objects.filter(
+            username=request.user, Visit_status=5)
+        data['html_enq_list'] = render_to_string('Salesperson_Dashboard/cold_list.htm', {'page_obj_cold_enq': page_obj_cold_enq, 'page_obj': page_obj,
+                                                                                         'page_obj_pending_enq': page_obj_pending_enq, 'page_obj_delivered_enq': page_obj_delivered_enq, 'page_obj_lost_enq': page_obj_lost_enq})
     else:
-        data['html_form'] = render_to_string('Salesperson_Dashboard/salesenq_delete.htm', {'obj_delete':obj_delete}, request=request)
+        data['html_form'] = render_to_string(
+            'Salesperson_Dashboard/salesenq_delete.htm', {'obj_delete': obj_delete}, request=request)
     return JsonResponse(data)
 
 
@@ -398,23 +411,21 @@ def salesenquiry_reports(request):
         featured_filter = request.GET.get('filterstatus')
         filterdata = Enquiry.objects.filter(Visit_status=featured_filter)
         total_filterdata_data = filterdata.count()
-        return render(request,'Salesperson_Dashboard/salesperson.htm',{"filterdata":filterdata,"total_filterdata_data":total_filterdata_data})
+        return render(request, 'Salesperson_Dashboard/salesperson.htm', {"filterdata": filterdata, "total_filterdata_data": total_filterdata_data})
     except:
         return redirect('saleperson')
-
 
 
 @login_required(login_url='login')
 def salesenquiry_search(request):
     try:
         qur = request.GET.get('search')
-        page_obj = Enquiry.objects.filter(Q(Name__icontains=qur) | Q(Enquiry_number__icontains=qur) | Q(State__icontains=qur) )
-        return render(request,'Salesperson_Dashboard/salesperson.htm',{"page_obj":page_obj})
+        page_obj = Enquiry.objects.filter(Q(Name__icontains=qur) | Q(
+            Enquiry_number__icontains=qur) | Q(State__icontains=qur))
+        return render(request, 'Salesperson_Dashboard/salesperson.htm', {"page_obj": page_obj})
     except:
         # return HttpResponse("please Cannot use None as a query value")
         return redirect('saleperson')
-
-
 
 
 @login_required(login_url='login')
@@ -424,12 +435,11 @@ def salespersonsearch_enq_month(request):
         qur1 = request.GET.get("search1")
         # print(qur)
         # print(qur1)
-        page_obj = Enquiry.objects.filter(created_at__range=(qur,qur1))
+        page_obj = Enquiry.objects.filter(created_at__range=(qur, qur1))
         print(page_obj)
-        return render(request,'Salesperson_Dashboard/salesperson.htm',{"page_obj":page_obj})
+        return render(request, 'Salesperson_Dashboard/salesperson.htm', {"page_obj": page_obj})
     except:
         return redirect('saleperson')
-
 
 
 @login_required(login_url='login')
@@ -438,16 +448,16 @@ def csv_Files_import(request):
         myfile = request.FILES['file']
         # print(myfile)
         fs = FileSystemStorage()
-        filename = fs.save(myfile.name,myfile)
+        filename = fs.save(myfile.name, myfile)
         # print(filename)
         uploaded_file_url = os.path.join(settings.BASE_DIR+fs.url(filename))
 
         if os.path.exists(uploaded_file_url) == True:
             # print(uploaded_file_url)
-            if not  myfile.name.endswith('.csv'):
-                messages.error(request,"this is not csv file ") 
-            
-            with open(uploaded_file_url,'r') as f:
+            if not myfile.name.endswith('.csv'):
+                messages.error(request, "this is not csv file ")
+
+            with open(uploaded_file_url, 'r') as f:
                 reader = csv.reader(f)
                 # print(f)
                 # print(reader)
@@ -456,13 +466,15 @@ def csv_Files_import(request):
                         pass
                     else:
                         row = "".join(row)
-                        row = row.replace(";"," ")
+                        row = row.replace(";", " ")
                         row = row.split()
                         # print(row)
                         user = User.objects.get(username=row[0])
-                        Enq_source = Enquiry_Source.objects.get(enq_source=row[9])
+                        Enq_source = Enquiry_Source.objects.get(
+                            enq_source=row[9])
                         profession = Profession.objects.get(profession=row[11])
-                        Visit_status = Client_Visit.objects.get(Visit_status=row[12])
+                        Visit_status = Client_Visit.objects.get(
+                            Visit_status=row[12])
                         Enq_number = row[1]
                         mobile_number = row[2]
                         if Enquiry.objects.filter(Enquiry_number=Enq_number).exists():
@@ -471,8 +483,8 @@ def csv_Files_import(request):
                             return HttpResponse(f" mobile  number {mobile_number} alerady existst")
                         else:
                             Enquiry.objects.create(
-                                username = user,
-                                Enquiry_number = row[1],
+                                username=user,
+                                Enquiry_number=row[1],
                                 Contact_number=row[2],
                                 Email=row[3],
                                 Name=row[4],
@@ -483,15 +495,10 @@ def csv_Files_import(request):
                                 enquiry_source=Enq_source,
                                 expected_purchase_Date=row[10],
                                 profession=profession,
-                                Visit_status = Visit_status,
-                                remarks = row[13]
+                                Visit_status=Visit_status,
+                                remarks=row[13]
                             )
             return HttpResponse(" Your csv  File is import successfully ")
 
     else:
         return redirect("Admin_panel")
-
-
-
-
-    
