@@ -13,12 +13,12 @@
           <label for="filtereports" style="font-weight:bold;" >Enquiry Status</label>
           <select class="form-control form-control-md" d="filtereports" name="filterstatus" required style="font-weight:bold;">
             <option selected>select status</option>
-            <option value="7">Hot</option>
-            <option value="8">Cold</option>
-            <option value="9">Pending</option>
-            <option value="10">Delivered</option>
-            <option value="11">Follow up</option>
-            <option value="12">Lost</option>
+            <option value="Hot">Hot</option>
+            <option value="Cold">Cold</option>
+            <option value="Pending">Pending</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Follow up">Follow up</option>
+            <option value="Lost">Lost</option>
           </select>
         </div>
         <div class="form-group col-md-6">
@@ -42,7 +42,6 @@
           <th>Contact Number</th>
           <th>Email</th>
           <th>status</th>
-          <th>Action</th>
         </tr>
       </thead>
       <tbody>
@@ -56,11 +55,6 @@
           <td>{{i.Contact_number}}</td>
           <td>{{i.Email|truncatechars:"20"|linebreaks}}</td>
           <td>{{i.username}}</td>
-          <td>
-            <button type="button"  class="btn btn-warning btn-sm  js-update-enq" data-url="{% url 'Enquiry_Update' i.id %}"><i class="fa fa-plus" aria-hidden="true"></i></button>
-            <button type="button"  class="btn btn-danger btn-sm  js-delete-enq"   data-url="{% url 'Enquiry_Delete' i.id %}"><i class="fa fa-trash" aria-hidden="true"></i></button>
-            <a href="#" ><button type="button" class="btn btn-info btn-sm" ><i class="fa fa-info" aria-hidden="true"></i></button></a>
-          </td>
         </tr>
         {% empty %}
         <tr>

@@ -10,7 +10,7 @@ from django.contrib import messages
 import csv
 import io
 from django.forms.models import model_to_dict
-
+from .filter import EnquiryFilter
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib import auth
 from django.contrib.auth import update_session_auth_hash
@@ -255,29 +255,31 @@ def user_delete(request, pk_id):
 
 @login_required(login_url='login')
 def saleperson_page(request):
+    all_enq = Enquiry.objects.all()
+    user_filter = EnquiryFilter(request.GET, queryset=all_enq)
     Hot_enq = Enquiry.objects.filter(
-        Visit_status=7, username=request.user).order_by('id')
+        Visit_status__Visit_status__icontains="Hot", username=request.user).order_by('id')
     paginator = Paginator(Hot_enq, 14)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     Hot_enq_count = Hot_enq.count()
 
     cold_enq = Enquiry.objects.filter(
-        username=request.user, Visit_status=8).order_by('id')
+        username=request.user, Visit_status__Visit_status__icontains="cold").order_by('id')
     paginator = Paginator(cold_enq, 14)
     page_number = request.GET.get('page')
     page_obj_cold_enq = paginator.get_page(page_number)
     cold_enq_count = cold_enq.count()
 
     pending_enq = Enquiry.objects.filter(
-        username=request.user, Visit_status=9).order_by('id')
+        username=request.user, Visit_status__Visit_status__icontains="Pending").order_by('id')
     paginator = Paginator(pending_enq, 14)
     page_number = request.GET.get('page')
     page_obj_pending_enq = paginator.get_page(page_number)
     pending_enq_count = pending_enq.count()
 
     delivered_enq = Enquiry.objects.filter(
-        username=request.user, Visit_status=10).order_by('id')
+        username=request.user, Visit_status__Visit_status__icontains="Delivered").order_by('id')
     paginator = Paginator(delivered_enq, 14)
     page_number = request.GET.get('page')
     page_obj_delivered_enq = paginator.get_page(page_number)
@@ -285,14 +287,14 @@ def saleperson_page(request):
 
   # today follow up code
     today_follow_up_enq = Enquiry.objects.filter(
-        username=request.user, Visit_status=11, Follow_up=datetime.datetime.today()).order_by('id')
+        username=request.user, Visit_status__Visit_status__icontains="Follow up", Follow_up=datetime.datetime.today()).order_by('id')
     paginator = Paginator(today_follow_up_enq, 14)
     page_number = request.GET.get('page')
     page_obj_today_follow_up_enq = paginator.get_page(page_number)
     today_follow_up_enq_count = today_follow_up_enq.count()
 
     # future follow up
-    follow_up_enq = Enquiry.objects.filter(username=request.user, Visit_status=11,
+    follow_up_enq = Enquiry.objects.filter(username=request.user, Visit_status__Visit_status__icontains="Follow up",
                                            Follow_up__gte=datetime.datetime.today()+datetime.timedelta(days=1)).order_by('id')
     paginator = Paginator(follow_up_enq, 14)
     page_number = request.GET.get('page')
@@ -300,7 +302,7 @@ def saleperson_page(request):
     follow_up_enq_count = follow_up_enq.count()
 
     lost_enq = Enquiry.objects.filter(
-        username=request.user, Visit_status=12).order_by('id')
+        username=request.user, Visit_status__Visit_status__icontains='Lost').order_by('id')
     paginator = Paginator(lost_enq, 14)
     page_number = request.GET.get('page')
     page_obj_lost_enq = paginator.get_page(page_number)
@@ -316,15 +318,15 @@ def salesperson_save_enq_form(request, form, template_name):
             form.save()
             data['form_is_valid'] = True
             page_obj_cold_enq = Enquiry.objects.filter(
-                username=request.user, Visit_status=2)
+                username=request.user, Visit_status__Visit_status__icontains="cold")
             page_obj = Enquiry.objects.filter(
-                Visit_status=1, username=request.user)
+                Visit_status__Visit_status__icontains='Hot', username=request.user)
             page_obj_pending_enq = Enquiry.objects.filter(
-                username=request.user, Visit_status=3)
+                username=request.user, Visit_status__Visit_status__icontains='Pending')
             page_obj_delivered_enq = Enquiry.objects.filter(
-                username=request.user, Visit_status=4)
+                username=request.user, Visit_status__Visit_status__icontains="Delivered")
             page_obj_lost_enq = Enquiry.objects.filter(
-                username=request.user, Visit_status=6)
+                username=request.user, Visit_status__Visit_status__icontains="Lost")
             data['html_enq_list'] = render_to_string('Salesperson_Dashboard/cold_list.htm', {'page_obj_cold_enq': page_obj_cold_enq, 'page_obj': page_obj,
                                                                                              'page_obj_pending_enq': page_obj_pending_enq, 'page_obj_delivered_enq': page_obj_delivered_enq, 'page_obj_lost_enq': page_obj_lost_enq})
         else:
@@ -348,15 +350,15 @@ def salesperson_enq_create(request):
             user.username = request.user
             data['form_is_valid'] = True
             page_obj_cold_enq = Enquiry.objects.filter(
-                username=request.user, Visit_status=2)
+                username=request.user, Visit_status__Visit_status__icontains="Hot")
             page_obj = Enquiry.objects.filter(
-                Visit_status=1, username=request.user)
+                Visit_status__Visit_status__icontains='Cold', username=request.user)
             page_obj_pending_enq = Enquiry.objects.filter(
-                username=request.user, Visit_status=3)
+                username=request.user, Visit_status__Visit_status__icontains='Pending')
             page_obj_delivered_enq = Enquiry.objects.filter(
-                username=request.user, Visit_status=4)
+                username=request.user, Visit_status__Visit_status__icontains='Delivered')
             page_obj_lost_enq = Enquiry.objects.filter(
-                username=request.user, Visit_status=5)
+                username=request.user, Visit_status__Visit_status__icontains='Lost')
             data['html_enq_list'] = render_to_string('Salesperson_Dashboard/cold_list.htm', {'page_obj_cold_enq': page_obj_cold_enq, 'page_obj': page_obj,
                                                                                              'page_obj_pending_enq': page_obj_pending_enq, 'page_obj_delivered_enq': page_obj_delivered_enq, 'page_obj_lost_enq': page_obj_lost_enq})
         else:
@@ -388,15 +390,15 @@ def salesperson_Enquiry_Delete(request, pk_id):
         obj_delete.delete()
         data['form_is_valid'] = True
         page_obj_cold_enq = Enquiry.objects.filter(
-            username=request.user, Visit_status=2)
+            username=request.user, Visit_status__Visit_status__icontains='Cold')
         page_obj = Enquiry.objects.filter(
-            Visit_status=1, username=request.user)
+            Visit_status__Visit_status__icontains='Hot', username=request.user)
         page_obj_pending_enq = Enquiry.objects.filter(
-            username=request.user, Visit_status=3)
+            username=request.user, Visit_status__Visit_status__icontains='Pending')
         page_obj_delivered_enq = Enquiry.objects.filter(
-            username=request.user, Visit_status=4)
+            username=request.user, Visit_status__Visit_status__icontains='Delivered')
         page_obj_lost_enq = Enquiry.objects.filter(
-            username=request.user, Visit_status=5)
+            username=request.user, Visit_status__Visit_status__icontains='Lost')
         data['html_enq_list'] = render_to_string('Salesperson_Dashboard/cold_list.htm', {'page_obj_cold_enq': page_obj_cold_enq, 'page_obj': page_obj,
                                                                                          'page_obj_pending_enq': page_obj_pending_enq, 'page_obj_delivered_enq': page_obj_delivered_enq, 'page_obj_lost_enq': page_obj_lost_enq})
     else:
@@ -409,7 +411,8 @@ def salesperson_Enquiry_Delete(request, pk_id):
 def salesenquiry_reports(request):
     try:
         featured_filter = request.GET.get('filterstatus')
-        filterdata = Enquiry.objects.filter(Visit_status=featured_filter)
+        filterdata = Enquiry.objects.filter(
+            Visit_status__Visit_status__icontains=featured_filter)
         total_filterdata_data = filterdata.count()
         return render(request, 'Salesperson_Dashboard/salesperson.htm', {"filterdata": filterdata, "total_filterdata_data": total_filterdata_data})
     except:
