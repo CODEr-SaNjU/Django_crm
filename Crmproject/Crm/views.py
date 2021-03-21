@@ -101,7 +101,6 @@ def search_enq_month(request):
         qur = request.GET.get('search')
         qur1 = request.GET.get("search1")
         last_all_enq = Enquiry.objects.filter(created_at__range=(qur, qur1))
-        # print(last_all_enq)
         return render(request, 'html_files/Main.htm', {"last_all_enq": last_all_enq})
     except:
         return redirect('Admin_panel')
@@ -143,7 +142,6 @@ def save_enq_form(request, form, template_name):
     data['html_form'] = render_to_string(
         template_name, context, request=request)
     return JsonResponse(data)
-    # print("sanju herer",data)
 
 
 @login_required(login_url='login')
@@ -436,10 +434,7 @@ def salespersonsearch_enq_month(request):
     try:
         qur = request.GET.get('search')
         qur1 = request.GET.get("search1")
-        # print(qur)
-        # print(qur1)
         page_obj = Enquiry.objects.filter(created_at__range=(qur, qur1))
-        print(page_obj)
         return render(request, 'Salesperson_Dashboard/salesperson.htm', {"page_obj": page_obj})
     except:
         return redirect('saleperson')
@@ -449,21 +444,16 @@ def salespersonsearch_enq_month(request):
 def csv_Files_import(request):
     if request.method == "POST" and request.FILES['file']:
         myfile = request.FILES['file']
-        # print(myfile)
         fs = FileSystemStorage()
         filename = fs.save(myfile.name, myfile)
-        # print(filename)
         uploaded_file_url = os.path.join(settings.BASE_DIR+fs.url(filename))
 
         if os.path.exists(uploaded_file_url) == True:
-            # print(uploaded_file_url)
             if not myfile.name.endswith('.csv'):
                 messages.error(request, "this is not csv file ")
 
             with open(uploaded_file_url, 'r') as f:
                 reader = csv.reader(f)
-                # print(f)
-                # print(reader)
                 for column, row in enumerate(reader):
                     if column == 0:
                         pass
@@ -471,7 +461,6 @@ def csv_Files_import(request):
                         row = "".join(row)
                         row = row.replace(";", " ")
                         row = row.split()
-                        # print(row)
                         user = User.objects.get(username=row[0])
                         Enq_source = Enquiry_Source.objects.get(
                             enq_source=row[9])

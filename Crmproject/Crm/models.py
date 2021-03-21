@@ -62,7 +62,6 @@ class Enquiry(models.Model):
     visited_status = models.IntegerField(choices=STATUS, default=1)
     VisitStatusDefaultValue = Client_Visit.objects.get(Visit_status="COLD")
     VisitStatusDefaultValueId = VisitStatusDefaultValue.id
-    print(VisitStatusDefaultValueId)
     Visit_status = models.ForeignKey(
         Client_Visit, on_delete=models.CASCADE, null=True, blank=True, default=VisitStatusDefaultValueId)
     Booking_Date = models.DateField(
