@@ -2,9 +2,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User, auth, Group
 from django.http import Http404, HttpResponse
 from django.core.files.storage import FileSystemStorage
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.models import User, auth, Group
-from django.http import Http404, HttpResponse
 from django.contrib.auth.models import AbstractBaseUser, UserManager
 from django.contrib import messages
 import csv
@@ -16,7 +13,6 @@ from django.contrib import auth
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
 from . decorators import unauthenticated_user, allowed_user, admin_only
 from django.contrib.auth.forms import UserCreationForm
 from django.core.paginator import PageNotAnInteger, EmptyPage, Paginator
@@ -47,7 +43,6 @@ def login(request):
             messages.error(
                 request, 'Error! please enter the correct  Username and Password for a staff account.')
             return render(request, 'html_files/login.htm')
-
     else:
         return render(request, "html_files/login.htm")
 
@@ -132,7 +127,6 @@ def save_enq_form(request, form, template_name):
             History.objects.create(
                 update_by=user, Enquiry_number=Enquiry_number, Visit_status=vist_status, remarks=rmrks)
             data['form_is_valid'] = True
-            last_all_enq = Enquiry.objects.all()
             last_all_enq = Enquiry.objects.filter().order_by('-id')[:10]
             data['html_enq_list'] = render_to_string(
                 'html_files/enq_list.htm', {'last_all_enq': last_all_enq})
@@ -344,8 +338,13 @@ def salesperson_enq_create(request):
             enquiry = form.save(commit=False)
             enquiry.username = request.user
             enquiry.save()
+            Enquiry_number = enquiry  # enq number
             user = form.save()
             user.username = request.user
+            vist_status = user.Visit_status
+            user = user.username
+            History.objects.create(
+                update_by=user, Enquiry_number=Enquiry_number, Visit_status=vist_status,)
             data['form_is_valid'] = True
             page_obj_cold_enq = Enquiry.objects.filter(
                 username=request.user, Visit_status__Visit_status__icontains="Hot")
