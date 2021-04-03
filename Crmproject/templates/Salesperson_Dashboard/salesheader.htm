@@ -28,13 +28,15 @@
                             </span>
                             <span class="navbar-text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                             <span class="navbar-text" >
-                                <form method="GET" action="{% url 'salesenquiry_search' %}" class="form-inline my-2 my-lg-10">
-                                    <input class="form-control mr-sm-2" type="search" placeholder="Search Enquiry" aria-label="Search" id="search" name="search" style="margin-right: 2px;">
-                                    <button class="btn btn-primary" type="submit">Search</button>
-                                </form>
+                                <div class="from-group">
+                                    <div class="form-group">
+                                        <input class="form-control mr-sm-2" type="text" placeholder="Search Enquiry" aria-label="Search" id="search"
+                                        style="margin-right: 2px;">
+                                    </div>
+                                </div>
                             </span>
                             <span class="navbar-text">
-                                <!-- <a href="#" class="ml-2"><button class="btn  my-2 my-sm-0" type="button">{{request.user}}</a></button> -->
+                                <a href="#" class="ml-2"><button class="btn  my-2 my-sm-0" type="button">{{request.user}}</a></button>
                             </span>
                             <span class="navbar-text">
                                 <a href="{% url 'logout' %}" class="ml-2"><button class="btn  my-2 my-sm-0" type="button">Logout</a></button>

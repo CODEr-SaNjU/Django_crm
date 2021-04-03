@@ -31,10 +31,10 @@ class Profession(models.Model):
 
 
 class Client_Visit(models.Model):
-    Visit_status = models.CharField(max_length=100, blank=True, null=True)
+    Enquiry_status = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return self.Visit_status
+        return self.Enquiry_status
 
 
 letters = string.ascii_uppercase
@@ -53,23 +53,24 @@ class Enquiry(models.Model):
     Enquiry_details = models.CharField(max_length=500,)
     City = models.CharField(max_length=100,)
     State = models.CharField(max_length=100,)
-    enquiry_source = models.ForeignKey(
+    Enquiry_source = models.ForeignKey(
         Enquiry_Source, on_delete=models.CASCADE, null=True, blank=True)
-    expected_purchase_Date = models.DateField(
+    Delivery_date = models.DateField(null=True, blank=True)
+    Expected_purchase_Date = models.DateField(
         verbose_name='Expected Purchase Date', auto_now_add=False, blank=True, null=True)
-    profession = models.ForeignKey(
+    Profession = models.ForeignKey(
         Profession, on_delete=models.CASCADE, null=True, blank=True)
-    visited_status = models.IntegerField(choices=STATUS, default=1)
-    VisitStatusDefaultValue = Client_Visit.objects.get(Visit_status="COLD")
+    Visited_status = models.IntegerField(choices=STATUS, default=1)
+    VisitStatusDefaultValue = Client_Visit.objects.get(Enquiry_status="COLD")
     VisitStatusDefaultValueId = VisitStatusDefaultValue.id
-    Visit_status = models.ForeignKey(
+    Enquiry_status = models.ForeignKey(
         Client_Visit, on_delete=models.CASCADE, null=True, blank=True, default=VisitStatusDefaultValueId)
     Booking_Date = models.DateField(
         verbose_name='Booking Date', blank=True, null=True)
     Follow_up = models.DateField(
         verbose_name='Follow Up Date', blank=True, null=True)
-    remarks = models.TextField(blank=True, null=True)
-    created_at = models.DateField(auto_now_add=True)
+    Remarks = models.TextField(blank=True, null=True)
+    Created_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.Enquiry_number
@@ -78,16 +79,12 @@ class Enquiry(models.Model):
 class History(models.Model):
     update_by = models.CharField(
         max_length=100, verbose_name="Update By", blank=True, null=True)
-    remarks = models.TextField(blank=True, null=True)
+    Remarks = models.TextField(blank=True, null=True)
     Enquiry_number = models.ForeignKey(
         Enquiry, verbose_name="Enquiry Number ", on_delete=models.CASCADE, null=True, blank=True)
-    Visit_status = models.CharField(
+    Enquiry_status = models.CharField(
         max_length=100, verbose_name="enquiry status")
-    enquiry_status_time = models.DateTimeField(auto_now_add=True)
+    Enquiry_status_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.Visit_status
-
-    # def save(self):
-    #    super(History, self).save()
-    #    History.objects.update(enquiry_status_time=self.visit_date)
+        return self.Enquiry_status

@@ -16,32 +16,32 @@ class SalespersonEnquiryForm(forms.ModelForm):
         fields = ['username', 'Contact_number', 'Email', 'Name',
                   'Company_name', 'Enquiry_details', 'City', 'State']
         labels = {
-            'username': ('Assign to Salesperson')
+            'username': ('Assign To Salesperson')
         }
 
 
 class salespersonUpdateEnquiryForm(forms.ModelForm):
     class Meta:
         model = Enquiry
-        fields = ['enquiry_source', 'profession', 'visited_status', 'Visit_status', 'Follow_up', 'expected_purchase_Date',
+        fields = ['Enquiry_source', 'Profession', 'Visited_status', 'Enquiry_status', 'Follow_up', 'Expected_purchase_Date',
                   'Booking_Date', 'Contact_number', 'Email', 'Name', 'Company_name', 'Enquiry_details', 'City', 'State']
         widget = {
-            'expected_purchase_Date': forms.DateInput(attrs={'type': 'date', }),
+            'Expected_purchase_Date': forms.DateInput(attrs={'type': 'date', }),
             'Booking_Date': DateInput(attrs={'type': 'date'}),
             'Follow_up': DateInput()
         }
         labels = {
-            'Visit_status': ('Enquiry status'),
-            'visited_status': ('visit status')
+            'Enquiry_status': ('Enquiry status'),
+            'Visited_status': ('visit status')
         }
 
 
 class salespersonstatusEnquiryForm(forms.ModelForm):
     class Meta:
         model = Enquiry
-        fields = ['Visit_status', 'remarks']
+        fields = ['Enquiry_status', 'Remarks']
         labels = {
-            'Visit_status': ('Enquiry status')
+            'Enquiry_status': ('Enquiry status')
         }
 
 
@@ -51,21 +51,21 @@ class CreateEnquiryForm(forms.ModelForm):
         fields = ['username', 'Contact_number', 'Email', 'Name',
                   'Company_name', 'Enquiry_details', 'City', 'State']
         labels = {
-            'username': ('Assign to Salesperson')
+            'username': ('Assign To A Salesperson')
         }
 
 
 class UpdateEnquiryForm(forms.ModelForm):
     class Meta:
         model = Enquiry
-        fields = ['username', 'enquiry_source', 'profession', 'visited_status', 'Visit_status', 'Follow_up', 'expected_purchase_Date',
-                  'Booking_Date', 'remarks', 'Contact_number', 'Email', 'Name', 'Company_name', 'Enquiry_details', 'City', 'State']
+        fields = ['username', 'Enquiry_source', 'Profession', 'Visited_status', 'Enquiry_status', 'Follow_up', 'Expected_purchase_Date', 'Delivery_date',
+                  'Booking_Date', 'Remarks', 'Contact_number', 'Email', 'Name', 'Company_name', 'Enquiry_details', 'City', 'State']
         labels = {
-            'username': ('Assign to user'),
-            'visited_status': ('visist status')
+            'username': ('Assign To Salesperson'),
+            'Visited_status': ('visist status')
         }
         widget = {
-            'expected_purchase_Date': DateInput(attrs={'type': 'date'}),
+            'Expected_purchase_Date': DateInput(attrs={'type': 'date'}),
             'Booking_Date': DateInput(attrs={'type': 'date'}),
         }
 
@@ -75,7 +75,7 @@ class UserForm(UserCreationForm):
         model = User
         fields = ['username', 'first_name', 'email', 'password1', 'password2']
         widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control', 'id': 'usernameid'}),
+            'username': forms.TextInput(attrs={'class': 'form-control', 'id': 'Usernameid'}),
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'id': 'first_nameid'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'id': 'emailid'}),
             'password1': forms.PasswordInput(attrs={'class': 'form-control', 'id': 'password1id'}),
