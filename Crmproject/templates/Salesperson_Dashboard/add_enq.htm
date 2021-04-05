@@ -15,3 +15,35 @@
     <button type="submit" class="btn btn-primary">Create Enquiry</button>
   </div>
 </form>
+{% block javascript %}
+<script>
+  $(document).ready(function () {
+    // catch the form's submit event
+    $('#id_Contact_number').keyup(function () {
+      // create an AJAX call
+      $.ajax({
+        data: $(this).serialize(), // get the form data
+        url: "{% url 'validate_Number' %}",
+        // on success
+        success: function (response) {
+          if (response.is_taken == true) {
+            $('#id_Contact_number').removeClass('is-valid').addClass('is-invalid');
+            $('#id_Contact_number').after('<div class="invalid-feedback d-block" id="contactnumberError">Enquiry with this Contact number already registered!</div>')
+          }
+          else {
+            $('#id_Contact_number').removeClass('is-invalid').addClass('is-valid');
+            $('#contactnumberError').remove();
+          }
+        },
+        // on error
+        error: function (response) {
+          // alert the error if any error occured
+          console.log(response.responseJSON.errors)
+        }
+      });
+      return false;
+    });
+  })
+
+</script>
+{% endblock javascript %}

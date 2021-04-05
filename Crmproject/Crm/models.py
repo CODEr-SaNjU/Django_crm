@@ -37,6 +37,14 @@ class Client_Visit(models.Model):
         return self.Enquiry_status
 
 
+class Machinename(models.Model):
+    Machine_Name = models.CharField(
+        verbose_name="Machine Name", max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return self.Machine_Name
+
+
 letters = string.ascii_uppercase
 Enquiry_number = (''.join(random.choice(letters) for i in range(10)))
 
@@ -54,8 +62,11 @@ class Enquiry(models.Model):
     City = models.CharField(max_length=100,)
     State = models.CharField(max_length=100,)
     Enquiry_source = models.ForeignKey(
-        Enquiry_Source, on_delete=models.CASCADE, null=True, blank=True)
-    Delivery_date = models.DateField(null=True, blank=True)
+        Enquiry_Source,  on_delete=models.CASCADE, null=True, blank=True)
+    Machine_Name = models.ForeignKey(
+        Machinename, on_delete=models.CASCADE, null=True, blank=True)
+    Delivery_date = models.DateField(
+        verbose_name="Delivery Date", null=True, blank=True)
     Expected_purchase_Date = models.DateField(
         verbose_name='Expected Purchase Date', auto_now_add=False, blank=True, null=True)
     Profession = models.ForeignKey(

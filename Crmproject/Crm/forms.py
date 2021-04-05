@@ -23,10 +23,10 @@ class SalespersonEnquiryForm(forms.ModelForm):
 class salespersonUpdateEnquiryForm(forms.ModelForm):
     class Meta:
         model = Enquiry
-        fields = ['Enquiry_source', 'Profession', 'Visited_status', 'Enquiry_status', 'Follow_up', 'Expected_purchase_Date',
+        fields = ['Enquiry_source', 'Profession', 'Machine_Name', 'Visited_status', 'Enquiry_status', 'Follow_up', 'Expected_purchase_Date', 'Delivery_date',
                   'Booking_Date', 'Contact_number', 'Email', 'Name', 'Company_name', 'Enquiry_details', 'City', 'State']
         widget = {
-            'Expected_purchase_Date': forms.DateInput(attrs={'type': 'date', }),
+            'Expected_purchase_Date': DateInput(attrs={'type': 'date', }),
             'Booking_Date': DateInput(attrs={'type': 'date'}),
             'Follow_up': DateInput()
         }
@@ -58,7 +58,7 @@ class CreateEnquiryForm(forms.ModelForm):
 class UpdateEnquiryForm(forms.ModelForm):
     class Meta:
         model = Enquiry
-        fields = ['username', 'Enquiry_source', 'Profession', 'Visited_status', 'Enquiry_status', 'Follow_up', 'Expected_purchase_Date', 'Delivery_date',
+        fields = ['username', 'Enquiry_source', 'Profession', 'Machine_Name', 'Visited_status', 'Enquiry_status', 'Follow_up', 'Expected_purchase_Date', 'Delivery_date',
                   'Booking_Date', 'Remarks', 'Contact_number', 'Email', 'Name', 'Company_name', 'Enquiry_details', 'City', 'State']
         labels = {
             'username': ('Assign To Salesperson'),

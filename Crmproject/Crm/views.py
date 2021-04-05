@@ -63,29 +63,42 @@ def Admin_panel(request):
                 request, f'Registration complete! You may log in!')
     else:
         userform = UserForm(request.POST)
-    all_user = User.objects.all()  # return all user here
 
-    all_enq = Enquiry.objects.all().order_by('id')
-    paginator = Paginator(all_enq, 10)
-    page_number = request.GET.get('page')
-    page_obj_all_enq = paginator.get_page(page_number)
-    total_enquiry_data = all_enq.count()
+    ctx = {}
+    url_parameter = request.GET.get('q')
+    if url_parameter:
+        last_all_enq = Enquiry.objects.filter(Q(Name__icontains=url_parameter) | Q(
+            Enquiry_number__icontains=url_parameter) | Q(State__icontains=url_parameter))
+    else:
+        all_user = User.objects.all()  # return all user here
+        all_enq = Enquiry.objects.all().order_by('id')
+        paginator = Paginator(all_enq, 10)
+        page_number = request.GET.get('page')
+        page_obj_all_enq = paginator.get_page(page_number)
+        total_enquiry_data = all_enq.count()
 
-    assign_enq = Enquiry.objects.filter(username__isnull=False).order_by('id')
-    paginator = Paginator(assign_enq, 10)
-    page_number = request.GET.get('page')
-    page_obj_assign_enq = paginator.get_page(page_number)
-    assign_enq_count = assign_enq.count()
+        assign_enq = Enquiry.objects.filter(
+            username__isnull=False).order_by('id')
+        paginator = Paginator(assign_enq, 10)
+        page_number = request.GET.get('page')
+        page_obj_assign_enq = paginator.get_page(page_number)
+        assign_enq_count = assign_enq.count()
 
-    notassign_enq = Enquiry.objects.filter(
-        username__isnull=True).order_by('id')
-    paginator = Paginator(notassign_enq, 10)
-    page_number = request.GET.get('page')
-    page_obj_notassign_enq = paginator.get_page(page_number)
-    notassign_enq_count = notassign_enq.count()
-    last_all_enq = Enquiry.objects.filter().order_by('-id')[:14]
-    all_enq_in_ascending_order = reversed(last_all_enq)
-
+        notassign_enq = Enquiry.objects.filter(
+            username__isnull=True).order_by('id')
+        paginator = Paginator(notassign_enq, 10)
+        page_number = request.GET.get('page')
+        page_obj_notassign_enq = paginator.get_page(page_number)
+        notassign_enq_count = notassign_enq.count()
+        last_all_enq = Enquiry.objects.filter().order_by('-id')[:14]
+        all_enq_in_ascending_order = reversed(last_all_enq)
+    ctx["last_all_enq"] = last_all_enq
+    if request.is_ajax():
+        html = render_to_string(
+            template_name='html_files/enq_list.htm', context={"last_all_enq": last_all_enq})
+        print("line number 114", html)
+        data_dict = {"html_from_view": html}
+        return JsonResponse(data=data_dict, safe=False)
     return render(request, 'html_files/Dashboard.htm', {'last_all_enq': last_all_enq, 'total_enquiry_data': total_enquiry_data, 'page_obj_all_enq': page_obj_all_enq, 'userform': userform, 'all_user': all_user, 'page_obj_assign_enq': page_obj_assign_enq, 'page_obj_notassign_enq': page_obj_notassign_enq, 'assign_enq_count': assign_enq_count, 'notassign_enq_count': notassign_enq_count})
 
 
@@ -100,25 +113,25 @@ def search_enq_month(request):
         return redirect('Admin_panel')
 
 
-@login_required(login_url='login')
-@admin_only
-def Enquiry_search(request):
-    ctx = {}
-    url_parameter = request.GET.get('q')
-    if url_parameter:
-        last_all_enq = Enquiry.objects.filter(Q(Name__icontains=url_parameter) | Q(
-            Enquiry_number__icontains=url_parameter) | Q(State__icontains=url_parameter))
-    else:
-        last_all_enq = Enquiry.objects.all()
+# @login_required(login_url='login')
+# @admin_only
+# def Enquiry_search(request):
+#     ctx = {}
+#     url_parameter = request.GET.get('q')
+#     if url_parameter:
+#         last_all_enq = Enquiry.objects.filter(Q(Name__icontains=url_parameter) | Q(
+#             Enquiry_number__icontains=url_parameter) | Q(State__icontains=url_parameter))
+#     else:
+#         last_all_enq = Enquiry.objects.all()
 
-    ctx["last_all_enq"] = last_all_enq
-    if request.is_ajax():
-        html = render_to_string(
-            template_name='html_files/enq_list.htm', context={"last_all_enq": last_all_enq})
-        print("line number 114", html)
-        data_dict = {"html_from_view": html}
-        return JsonResponse(data=data_dict, safe=False)
-    return render(request, "html_files/Dashboard.htm", context=ctx)
+#     ctx["last_all_enq"] = last_all_enq
+#     if request.is_ajax():
+#         html = render_to_string(
+#             template_name='html_files/enq_list.htm', context={"last_all_enq": last_all_enq})
+#         print("line number 114", html)
+#         data_dict = {"html_from_view": html}
+#         return JsonResponse(data=data_dict, safe=False)
+#     return render(request, "html_files/Dashboard.htm", context=ctx)
 
 
 @login_required(login_url='login')
@@ -456,7 +469,7 @@ def salespersonsearch_enq_month(request):
     try:
         qur = request.GET.get('search')
         qur1 = request.GET.get("search1")
-        page_obj = Enquiry.objects.filter(created_at__range=(qur, qur1))
+        page_obj = Enquiry.objects.filter(Created_at__range=(qur, qur1))
         return render(request, 'Salesperson_Dashboard/salesperson_dashboard.htm', {"page_obj": page_obj})
     except:
         return redirect('saleperson')

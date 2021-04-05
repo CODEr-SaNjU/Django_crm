@@ -6,7 +6,6 @@ urlpatterns = [
     path('', views.login, name="login"),
     # path("Api_data/",views.api_data,name="Api_data"),
     path("Admin_panel/", views.Admin_panel, name="Admin_panel"),
-    path("Admin_panel/search/", views.Enquiry_search, name="Enquiry_search"),
     path("Admin_panel/search_enq_month/",
          views.search_enq_month, name="search_enq_month"),
     path("enq_create/", views.enq_create, name="enq_create"),
