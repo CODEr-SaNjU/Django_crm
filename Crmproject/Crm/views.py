@@ -55,51 +55,29 @@ def logout(request):
 @login_required(login_url='login')
 @admin_only
 def Admin_panel(request):
-    if request.method == "POST":
-        userform = UserForm(request.POST)
-        if userform.is_valid():
-            user = userform.save()
-            messages.success(
-                request, f'Registration complete! You may log in!')
-    else:
-        userform = UserForm(request.POST)
+    all_user = User.objects.all()  # return all user here
+    all_enq = Enquiry.objects.all().order_by('id')
+    paginator = Paginator(all_enq, 1)
+    page_number = request.GET.get('page')
+    page_obj_all_enq = paginator.get_page(page_number)
+    total_enquiry_data = all_enq.count()
 
-    ctx = {}
-    url_parameter = request.GET.get('q')
-    if url_parameter:
-        last_all_enq = Enquiry.objects.filter(Q(Name__icontains=url_parameter) | Q(
-            Enquiry_number__icontains=url_parameter) | Q(State__icontains=url_parameter))
-    else:
-        all_user = User.objects.all()  # return all user here
-        all_enq = Enquiry.objects.all().order_by('id')
-        paginator = Paginator(all_enq, 10)
-        page_number = request.GET.get('page')
-        page_obj_all_enq = paginator.get_page(page_number)
-        total_enquiry_data = all_enq.count()
+    assign_enq = Enquiry.objects.filter(
+        username__isnull=False).order_by('id')
+    paginator = Paginator(assign_enq, 10)
+    page_number = request.GET.get('page')
+    page_obj_assign_enq = paginator.get_page(page_number)
+    assign_enq_count = assign_enq.count()
 
-        assign_enq = Enquiry.objects.filter(
-            username__isnull=False).order_by('id')
-        paginator = Paginator(assign_enq, 10)
-        page_number = request.GET.get('page')
-        page_obj_assign_enq = paginator.get_page(page_number)
-        assign_enq_count = assign_enq.count()
-
-        notassign_enq = Enquiry.objects.filter(
-            username__isnull=True).order_by('id')
-        paginator = Paginator(notassign_enq, 10)
-        page_number = request.GET.get('page')
-        page_obj_notassign_enq = paginator.get_page(page_number)
-        notassign_enq_count = notassign_enq.count()
-        last_all_enq = Enquiry.objects.filter().order_by('-id')[:14]
-        all_enq_in_ascending_order = reversed(last_all_enq)
-    ctx["last_all_enq"] = last_all_enq
-    if request.is_ajax():
-        html = render_to_string(
-            template_name='html_files/enq_list.htm', context={"last_all_enq": last_all_enq})
-        print("line number 114", html)
-        data_dict = {"html_from_view": html}
-        return JsonResponse(data=data_dict, safe=False)
-    return render(request, 'html_files/Dashboard.htm', {'last_all_enq': last_all_enq, 'total_enquiry_data': total_enquiry_data, 'page_obj_all_enq': page_obj_all_enq, 'userform': userform, 'all_user': all_user, 'page_obj_assign_enq': page_obj_assign_enq, 'page_obj_notassign_enq': page_obj_notassign_enq, 'assign_enq_count': assign_enq_count, 'notassign_enq_count': notassign_enq_count})
+    notassign_enq = Enquiry.objects.filter(
+        username__isnull=True).order_by('id')
+    paginator = Paginator(notassign_enq, 10)
+    page_number = request.GET.get('page')
+    page_obj_notassign_enq = paginator.get_page(page_number)
+    notassign_enq_count = notassign_enq.count()
+    newfewenq = Enquiry.objects.filter().order_by('-id')[:14]
+    all_enq_in_ascending_order = reversed(newfewenq)
+    return render(request, 'html_files/Dashboard.htm', {'total_enquiry_data': total_enquiry_data, 'newfewenq': newfewenq, 'page_obj_all_enq': page_obj_all_enq, 'all_user': all_user, 'page_obj_assign_enq': page_obj_assign_enq, 'page_obj_notassign_enq': page_obj_notassign_enq, 'assign_enq_count': assign_enq_count, 'notassign_enq_count': notassign_enq_count})
 
 
 @login_required(login_url='login')
@@ -107,31 +85,39 @@ def search_enq_month(request):
     try:
         qur = request.GET.get('search')
         qur1 = request.GET.get("search1")
-        last_all_enq = Enquiry.objects.filter(Created_at__range=(qur, qur1))
-        return render(request, 'html_files/Dashboard.htm', {"last_all_enq": last_all_enq})
+        newfewenq = Enquiry.objects.filter(Created_at__range=(qur, qur1))
+        return render(request, 'html_files/Dashboard.htm', {"newfewenq": newfewenq})
     except:
         return redirect('Admin_panel')
 
 
-# @login_required(login_url='login')
-# @admin_only
-# def Enquiry_search(request):
-#     ctx = {}
-#     url_parameter = request.GET.get('q')
-#     if url_parameter:
-#         last_all_enq = Enquiry.objects.filter(Q(Name__icontains=url_parameter) | Q(
-#             Enquiry_number__icontains=url_parameter) | Q(State__icontains=url_parameter))
-#     else:
-#         last_all_enq = Enquiry.objects.all()
+@login_required(login_url='login')
+@admin_only
+def Enquiry_search(request):
+    try:
+        qur = request.GET.get('search')
+        newfewenq = Enquiry.objects.filter(Q(Name__icontains=qur) | Q(
+            Enquiry_number__icontains=qur) | Q(State__icontains=qur))
+        print(newfewenq)
+        return render(request, 'html_files/Dashboard.htm', {"newfewenq": newfewenq})
+    except:
+        return redirect('Admin_panel')
+    # ctx = {}
+    # url_parameter = request.GET.get('q')
+    # if url_parameter:
+    #     newfewenq = Enquiry.objects.filter(Q(Name__icontains=url_parameter) | Q(
+    #         Enquiry_number__icontains=url_parameter) | Q(State__icontains=url_parameter))
+    # else:
+    #     newfewenq = Enquiry.objects.all().order_by('-id')[:14]
 
-#     ctx["last_all_enq"] = last_all_enq
-#     if request.is_ajax():
-#         html = render_to_string(
-#             template_name='html_files/enq_list.htm', context={"last_all_enq": last_all_enq})
-#         print("line number 114", html)
-#         data_dict = {"html_from_view": html}
-#         return JsonResponse(data=data_dict, safe=False)
-#     return render(request, "html_files/Dashboard.htm", context=ctx)
+    # ctx["newfewenq"] = newfewenq
+    # if request.is_ajax():
+    #     html = render_to_string(
+    #         template_name='html_files/enq_list.htm', context={"newfewenq": newfewenq})
+    #     print("line number 114", html)
+    #     data_dict = {"html_from_view": html}
+    #     return JsonResponse(data=data_dict, safe=False)
+    # return render(request, "html_files/Dashboard.htm", context=ctx)
 
 
 @login_required(login_url='login')
@@ -148,9 +134,9 @@ def save_enq_form(request, form, template_name):
             History.objects.create(
                 update_by=user, Enquiry_number=Enquiry_number, Enquiry_status=vist_status, Remarks=rmrks)
             data['form_is_valid'] = True
-            last_all_enq = Enquiry.objects.filter().order_by('-id')[:10]
+            newfewenq = Enquiry.objects.filter().order_by('-id')[:10]
             data['html_enq_list'] = render_to_string(
-                'html_files/enq_list.htm', {'last_all_enq': last_all_enq})
+                'html_files/enq_list.htm', {'newfewenq': newfewenq})
         else:
             data['form_is_valid'] = False
     context = {'form': form}
@@ -193,9 +179,9 @@ def enq_create(request):
             History.objects.create(
                 update_by=user, Enquiry_number=Enquiry_number, Enquiry_status=Enquiry_status,)
             data['form_is_valid'] = True
-            last_all_enq = Enquiry.objects.all()
+            newfewenq = Enquiry.objects.all()
             data['html_enq_list'] = render_to_string(
-                'html_files/enq_list.htm', {'last_all_enq': last_all_enq})
+                'html_files/enq_list.htm', {'newfewenq': newfewenq})
         else:
             data['form_is_valid'] = False
     else:
@@ -206,7 +192,30 @@ def enq_create(request):
     return JsonResponse(data)
 
 
-@login_required(login_url='login')
+@login_required(login_url="login")
+def reports_genrate(request):
+    try:
+        featured_filter = request.GET.get('filteroption')
+        fromdate_value = request.GET.get('fromdate')
+        fromdate_value = request.GET.get('enddate')
+        if featured_filter == "Delivery_Date":
+            filterdata = Enquiry.objects.filter(
+                Delivery_date__range=(fromdate_value, fromdate_value))
+            print(filterdata, "line number 196 ")
+        elif featured_filter == "Expected_Purchase_Date":
+            filterdata = Enquiry.objects.filter(
+                Expected_purchase_Date__range=(fromdate_value, fromdate_value))
+            print(filterdata)
+        elif featured_filter == "Booking_Date":
+            filterdata = Enquiry.objects.filter(
+                Booking_Date__range=(fromdate_value, fromdate_value))
+            print(filterdata, "booking date here ")
+        return render(request, 'html_files/Dashboard.htm', {"filterdata": filterdata})
+    except:
+        return redirect('Admin_panel')
+
+
+@ login_required(login_url='login')
 def Enquiry_Update(request, pk_id):
     obj_update = get_object_or_404(Enquiry, id=pk_id)
     if request.method == "POST":
@@ -216,23 +225,23 @@ def Enquiry_Update(request, pk_id):
     return save_enq_form(request, form, 'html_files/enquiry_update.htm')
 
 
-@login_required(login_url='login')
+@ login_required(login_url='login')
 def Enquiry_Delete(request, pk_id):
     obj_delete = get_object_or_404(Enquiry, id=pk_id)
     data = dict()
     if request.method == "POST":
         obj_delete.delete()
         data['form_is_valid'] = True
-        last_all_enq = Enquiry.objects.filter().order_by('-id')[:10]
+        newfewenq = Enquiry.objects.filter().order_by('-id')[:10]
         data['html_enq_list'] = render_to_string(
-            'html_files/enq_list.htm', {'last_all_enq': last_all_enq})
+            'html_files/enq_list.htm', {'newfewenq': newfewenq})
     else:
         data['html_form'] = render_to_string(
             'html_files/enquiry_delete.htm', {'obj_delete': obj_delete}, request=request)
     return JsonResponse(data)
 
 
-@login_required(login_url='login')
+@ login_required(login_url='login')
 def save_user_form(request, form, template_name):
     data = dict()
     if request.method == 'POST':
@@ -250,7 +259,7 @@ def save_user_form(request, form, template_name):
     return JsonResponse(data)
 
 
-@login_required(login_url='login')
+@ login_required(login_url='login')
 def user_update(request, pk_id):
     user_update = get_object_or_404(User, id=pk_id)
     if request.method == "POST":
@@ -260,7 +269,7 @@ def user_update(request, pk_id):
     return save_user_form(request, form, 'html_files/user_update.htm')
 
 
-@login_required(login_url='login')
+@ login_required(login_url='login')
 def user_delete(request, pk_id):
     user_delete = get_object_or_404(User, id=pk_id)
     data = dict()
@@ -276,7 +285,7 @@ def user_delete(request, pk_id):
     return JsonResponse(data)
 
 
-@login_required(login_url='login')
+@ login_required(login_url='login')
 def saleperson_page(request):
     ctx = {}
     url_parameter = request.GET.get("q")
@@ -350,7 +359,7 @@ def saleperson_page(request):
     return render(request, 'Salesperson_Dashboard/salesperson_dashboard.htm', context=ctx)
 
 
-@login_required(login_url='login')
+@ login_required(login_url='login')
 def salesperson_save_enq_form(request, form, template_name):
     data = dict()
     if request.method == 'POST':
@@ -377,7 +386,7 @@ def salesperson_save_enq_form(request, form, template_name):
     return JsonResponse(data)
 
 
-@login_required(login_url='login')
+@ login_required(login_url='login')
 def salesperson_enq_create(request):
     data = dict()
     if request.method == 'POST':
@@ -416,7 +425,7 @@ def salesperson_enq_create(request):
     return JsonResponse(data)
 
 
-@login_required(login_url='login')
+@ login_required(login_url='login')
 def salesperson_Enquiry_Update(request, pk_id):
     obj_update = get_object_or_404(Enquiry, id=pk_id)
     if request.method == "POST":
@@ -426,8 +435,7 @@ def salesperson_Enquiry_Update(request, pk_id):
     return salesperson_save_enq_form(request, form, 'Salesperson_Dashboard/salesenq_update.htm')
 
 
-@login_required(login_url='login')
-@login_required(login_url='login')
+@ login_required(login_url='login')
 def salesperson_Enquiry_Delete(request, pk_id):
     obj_delete = get_object_or_404(Enquiry, id=pk_id)
     data = dict()
@@ -452,19 +460,19 @@ def salesperson_Enquiry_Delete(request, pk_id):
     return JsonResponse(data)
 
 
-@login_required(login_url='login')
+@ login_required(login_url='login')
 def salesenquiry_reports(request):
     try:
         featured_filter = request.GET.get('filterstatus')
-        filterdata = Enquiry.objects.filter(
-            Enquiry_status__Enquiry_status__icontains=featured_filter)
+        filterdata = Enquiry.objects.filter(username=request.user,
+                                            Enquiry_status__Enquiry_status__icontains=featured_filter)
         total_filterdata_data = filterdata.count()
         return render(request, 'Salesperson_Dashboard/salesperson_dashboard.htm', {"filterdata": filterdata, "total_filterdata_data": total_filterdata_data})
     except:
         return redirect('saleperson')
 
 
-@login_required(login_url='login')
+@ login_required(login_url='login')
 def salespersonsearch_enq_month(request):
     try:
         qur = request.GET.get('search')
@@ -475,7 +483,7 @@ def salespersonsearch_enq_month(request):
         return redirect('saleperson')
 
 
-@login_required(login_url='login')
+@ login_required(login_url='login')
 def csv_Files_import(request):
     if request.method == "POST" and request.FILES['file']:
         myfile = request.FILES['file']

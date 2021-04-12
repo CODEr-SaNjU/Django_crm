@@ -7,10 +7,11 @@
   <div class="col-lg-2 col-md-3 ">
     <div class="card bg-info card-left">
       <div class="card-body">
-        <nav class="nav d-block card-header-tabs nav-fill">
-          <a data-toggle="tab" class="nav-link text-dark text-center" aria-current="page" href="#enquiry">Enquiry</a>
-          <a data-toggle="tab" class="nav-link text-dark text-center" href="#reports">Reports</a>
-          <a data-toggle="tab" class="nav-link text-dark text-center" href="#Users">Users</a>
+        <nav class="nav d-block card-header-tabs  nav-fill" role="tablist" id="myTab">
+          
+          <a data-toggle="tab" aria-controls="enquiry"  role="tab" class="nav-link text-dark text-center" aria-current="page" href="#enquiry">Enquiry</a>
+          <a data-toggle="tab" aria-controls="reports" role="tab" class="nav-link text-dark text-center" href="#reports">Reports</a>
+          <a data-toggle="tab" aria-controls="Users" role="tab" class="nav-link text-dark text-center" href="#Users">Users</a>
         </nav>
       </div>
     </div>
@@ -18,13 +19,13 @@
   <div class="col-lg-10" style="padding-right:1px;padding-left: 0px;">
     <div class="card">
       <div class="tab-content">
-        <div class="tab-pane active" id="enquiry">
+        <div class="tab-pane fade show  active" id="enquiry">
           {% include 'html_files/enquiry_tab.htm' %}
         </div>
-        <div class="tab-pane" id="reports">
-          this is Reports
+        <div class="tab-pane fade " id="reports">
+          {% include 'html_files/reports.htm' %}
         </div>
-        <div class="tab-pane" id="Users">
+        <div class="tab-pane fade" id="Users">
           {%  include 'html_files/User_details.htm' %}
         </div>
       </div>
@@ -32,3 +33,14 @@
   </div>
 </div>
 {% endblock %}
+<script>
+  $(document).ready(function () {
+    $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+      localStorage.setItem('activeTab', $(e.target).attr('href'));
+    });
+    var activeTab = localStorage.getItem('activeTab');
+    if (activeTab) {
+      $('#myTab a[href="' + activeTab + '"]').tab('show');
+    }
+  });
+</script>

@@ -1,7 +1,7 @@
 {% load crispy_forms_tags %}
 <nav class="nav nav-tabs bg-dark card-header-tabs nav-fill" style="list-style-type: none;">
     <a data-toggle="tab" class="text-info text-uppercase mb-1" href="#alluser">All Users</a>
-    <a data-toggle="tab" class="text-success text-uppercase mb-1" href="#user_registration" >New User Registration</a>
+    <!-- <a data-toggle="tab" class="text-success text-uppercase mb-1" href="#user_registration" >New User Registration</a> -->
     <!-- <a data-toggle="tab" class="text-info text-uppercase mb-1" href="#assenquiry">assigned Enquiry</a>
     <a data-toggle="tab" class="text-gray-100 text-uppercase mb-1" href="#notassenquiry">Not Assigned Enquiry</a>
     <a data-toggle="tab" class="text-warning text-uppercase mb-1" href="#enquiryclosed">Enquiries Closed</a> -->
@@ -12,9 +12,6 @@
       <div class="card-body tab-content w-120 p-10" style="padding:.5rem;">
         <div class="tab-pane active" id="alluser">
           {%  include 'html_files/alluser.htm' %}
-        </div>
-        <div class="tab-pane" id="user_registration">
-          {%  include 'html_files/user_registration.htm' %}
         </div>
       </div>
     </div>

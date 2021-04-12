@@ -1,0 +1,59 @@
+<button type="button" class="btn btn-primary btn-sm btn-block " style="margin-top: -13px; font-size:x-large; font-weight: bolder;">Reports </button>
+<div class="container">
+    <hr class="sm-2">
+    <form action="{% url 'reports_genrate' %}"method="GET">
+        <div class="row">
+            <div class="col-sm-4">
+                <select class="form-select form-control form-select-lg mb-3" name="filteroption"  required>
+                    <option selected>select status</option>
+                    <option value="Expected_Purchase_Date">Expected Purchase Date</option>
+                    <option value="Delivery_Date">Delivery Date</option>
+                    <option value="Booking_Date">Booking Date</option>
+                </select>
+            </div>
+            <div class="col-sm-8">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <input type="date"  class="form-control" name="fromdate" required >
+                    </div>
+                    <div class="col-sm-5">
+                        <input type="date" class="form-control" name="enddate" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<table class="table table-hover table-sm" id="table-coldenq" style="padding: 100px; font-size: small;">
+    <thead>
+        <tr>
+            <th>Enquiry Number</th>
+            <th>Name</th>
+            <th>Company Name</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Contact Number</th>
+            <th>Email</th>
+            <th>status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in filterdata %}
+        <tr style="color: black; font-weight: bold;">
+            <td>{{i.Enquiry_number}}</td>
+            <td>{{i.Name}}</td>
+            <td>{{i.Company_name|safe|truncatechars:"7"|linebreaks}}</td>
+            <td>{{i.City|safe|truncatechars:"20"|linebreaks}}</td>
+            <td>{{i.State|safe|truncatechars:"20"|linebreaks}}</td>
+            <td>{{i.Contact_number}}</td>
+            <td>{{i.Email|truncatechars:"20"|linebreaks}}</td>
+            <td>{{i.Enquiry_status}}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="12" class="text-center bg-warning">No Enquiry Found</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
