@@ -193,26 +193,35 @@ def enq_create(request):
 
 
 @login_required(login_url="login")
-def reports_genrate(request):
+def search_query(request):
     try:
         featured_filter = request.GET.get('filteroption')
         fromdate_value = request.GET.get('fromdate')
-        fromdate_value = request.GET.get('enddate')
+        enddate_value = request.GET.get('enddate')
         if featured_filter == "Delivery_Date":
             filterdata = Enquiry.objects.filter(
-                Delivery_date__range=(fromdate_value, fromdate_value))
-            print(filterdata, "line number 196 ")
+                Delivery_date__range=[fromdate_value, enddate_value])
+
         elif featured_filter == "Expected_Purchase_Date":
             filterdata = Enquiry.objects.filter(
-                Expected_purchase_Date__range=(fromdate_value, fromdate_value))
-            print(filterdata)
+                Expected_purchase_Date__range=[fromdate_value, enddate_value])
+
         elif featured_filter == "Booking_Date":
             filterdata = Enquiry.objects.filter(
-                Booking_Date__range=(fromdate_value, fromdate_value))
-            print(filterdata, "booking date here ")
-        return render(request, 'html_files/Dashboard.htm', {"filterdata": filterdata})
+                Booking_Date__range=[fromdate_value, enddate_value])
+
+        return filterdata
     except:
         return redirect('Admin_panel')
+
+
+@login_required(login_url="login")
+def reports_genrate(request):
+    query_filter = search_query(request)
+    context = {
+        'filterdata': query_filter
+    }
+    return render(request, "html_files/Dashboard.htm", context)
 
 
 @ login_required(login_url='login')
@@ -527,13 +536,29 @@ def csv_Files_import(request):
                                 Enquiry_details=row[6],
                                 City=row[7],
                                 State=row[8],
-                                enquiry_source=Enq_source,
-                                expected_purchase_Date=row[10],
-                                profession=profession,
+                                Enquiry_source=Enq_source,
+                                Expected_purchase_Date=row[10],
+                                Profession=profession,
                                 Enquiry_status=Enquiry_status,
-                                remarks=row[13]
+                                Remarks=row[13]
                             )
             return HttpResponse(" Your csv  File is import successfully ")
 
     else:
         return redirect("Admin_panel")
+
+
+def csv_Files_export(request):
+    filterdata = search_query(request)
+    response = HttpResponse(content_type="text/csv")
+    response['Content-Disposition'] = 'attachment; filename=Enquiry' + \
+        str(datetime.datetime.now())+'.csv'
+    writer = csv.writer(response)
+    writer.writerow(['Enquiry_number', 'Contact_number', 'Email',
+                     'Name', 'Company_name', 'Enquiry_details', 'City', 'State', 'Enquiry_source', 'Machine_Name', 'Delivery_date', 'Expected_purchase_Date', 'Profession', 'Visited_status', 'Enquiry_status', 'Booking_Date', 'Follow_up', 'Remarks', 'Created_at'])
+
+    for queryset in filterdata:
+        print(queryset)
+        writer.writerow(
+            [queryset.Enquiry_number, queryset.Contact_number, queryset.Email, queryset.Name, queryset.Company_name, queryset.Enquiry_details, queryset.City, queryset.State, queryset.Enquiry_source, queryset.Machine_Name, queryset.Delivery_date, queryset.Expected_purchase_Date, queryset.Profession, queryset.Visited_status, queryset.Enquiry_status, queryset.Booking_Date, queryset.Follow_up, queryset.Remarks, queryset.Created_at])
+    return response

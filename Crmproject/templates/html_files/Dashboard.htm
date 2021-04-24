@@ -4,14 +4,13 @@
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/Header.css' %}">
 <div class="row">
-  <div class="col-lg-2 col-md-3 ">
+  <div class="col-lg-2 ">
     <div class="card bg-info card-left">
       <div class="card-body">
-        <nav class="nav d-block card-header-tabs  nav-fill" role="tablist" id="myTab">
-          
-          <a data-toggle="tab" aria-controls="enquiry"  role="tab" class="nav-link text-dark text-center" aria-current="page" href="#enquiry">Enquiry</a>
-          <a data-toggle="tab" aria-controls="reports" role="tab" class="nav-link text-dark text-center" href="#reports">Reports</a>
-          <a data-toggle="tab" aria-controls="Users" role="tab" class="nav-link text-dark text-center" href="#Users">Users</a>
+        <nav class="nav d-block card-header-tabs data-deep-link="true" nav-fill" href="{% url 'Admin_panel' %}" role="tablist" id="myTab">
+          <a data-toggle="tab" aria-controls="enquiry"  role="tab" class="nav-link text-dark text-center" aria-current="page" href="#enquiry" aria-selected="true">Enquiry</a>
+          <a data-toggle="tab" aria-controls="reports" role="tab" class="nav-link text-dark text-center" href="#reports" aria-selected="false">Reports</a>
+          <a data-toggle="tab" aria-controls="Users" role="tab" class="nav-link text-dark text-center" href="#Users" aria-selected="false">Users</a>
         </nav>
       </div>
     </div>

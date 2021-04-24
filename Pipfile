@@ -40,6 +40,8 @@ django-widget-tweaks = "*"
 django-allauth = "*"
 pandas = "*"
 django-filter = "*"
+django-import-export = "*"
+beautifulsoup4 = "*"
 
 [dev-packages]
 

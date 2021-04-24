@@ -32,6 +32,7 @@ urlpatterns = [
          views.salesperson_Enquiry_Delete, name="salesperson_Enquiry_Delete"),
     path("salesperson_Enquiry_Update/<str:pk_id>/",
          views.salesperson_Enquiry_Update, name="salesperson_Enquiry_Update"),
+    path("csv_Files_export", views.csv_Files_export, name="csv_Files_export"),
 
 
 ]

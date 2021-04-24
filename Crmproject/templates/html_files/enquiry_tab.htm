@@ -1,26 +1,22 @@
-<nav class="nav nav-tabs bg-dark card-header-tabs nav-fill" id="myTab" role="tablist" style="list-style-type: none;">
-  <a data-toggle="tab" aria-controls="newenquiry" role="tab" style="font-style: bold;" class="text-* text-uppercase mb-1" href="#newenquiry">New Enquiry</a>
-  <a data-toggle="tab" aria-controls="allenquiry" role="tab" style="font-style: bold;" class="text-* text-uppercase mb-1" href="#allenquiry" ><span class="text-white">{{total_enquiry_data}}</span> ALl Enquiry</a>
-  <a data-toggle="tab" aria-controls="assenquiry" role="tab" style="font-style: bold;" class="text-* text-uppercase mb-1" href="#assenquiry"><span class="text-white">{{assign_enq_count }} </span>  assigned Enquiry</a>
-  <a data-toggle="tab" aria-controls="notassenquiry" role="tab" style="font-style: bold;" class="text-* text-uppercase mb-1" href="#notassenquiry"><span class="text-white">{{notassign_enq_count }} </span>  Not Assigned Enquiry</a>
-  <!-- <a data-toggle="tab" style="font-style: bold;" class="text-* text-uppercase mb-1" href="#enquiryclosed">Enquiries Closed</a> -->
+<nav class="nav nav-tabs bg-dark card-header-tabs nav-fill"  data-deep-link="true" data-deep-link-smudge="true" data-deep-link-smudge-delay="600"   id="myTab" role="tablist" style="list-style-type: none;">
+  <a data-toggle="tab" aria-controls="newenquiry" role="tab" class="text-* text-uppercase mb-1" style="font-style: bold;" href="#newenquiry"  >New Enquiry</a>
+  <a data-toggle="tab" aria-controls="allenquiry" role="tab" class="text-* text-uppercase mb-1" style="font-style: bold;" href="#allenquiry" ><span class="text-white">{{total_enquiry_data}}</span> ALl Enquiry</a>
+  <a data-toggle="tab" aria-controls="assenquiry" role="tab" class="text-* text-uppercase mb-1" style="font-style: bold;" href="#assenquiry"><span class="text-white">{{assign_enq_count }} </span>  assigned Enquiry</a>
+  <a data-toggle="tab" aria-controls="notassenquiry" role="tab" class="text-* text-uppercase mb-1" style="font-style: bold;" href="#notassenquiry"><span class="text-white">{{notassign_enq_count }} </span>  Not Assigned Enquiry</a>
 </nav>
-<div class="card-body tab-content w-150 p-120" style="padding:.5rem;">
-  <div class="tab-pane fade show  active" id="newenquiry">
+<div class="card-body tab-content w-150 p-120" data-tabs-content="deeplinked-tabs" style="padding:.5rem;">
+  <div class="tab-pane fade show  active"  id="newenquiry">
     {%  include 'html_files/newenquiry.htm' %}
   </div>
-  <div class="tab-pane fade " id="allenquiry">
+  <div class="tab-pane fade "  id="allenquiry">
     {%  include 'html_files/allenquiry.htm' %}
   </div>
-  <div class="tab-pane fade " id="assenquiry">
+  <div class="tab-pane fade "  id="assenquiry">
     {% include 'html_files/assign_enq.htm' %}
   </div>
-  <div class="tab-pane fade " id="notassenquiry">
+  <div class="tab-pane fade "  id="notassenquiry">
     {% include 'html_files/notassign_enq.htm' %}
   </div>
-  <!-- <div class="tab-pane fade " id="enquiryclosed">
-    <h1>enquiryclosed here</h1>
-  </div> -->
 </div>
   <div class="div">
     <form action=" {%  url 'csv_Files_import' %}" method="POST" enctype="multipart/form-data">
@@ -44,4 +40,28 @@
       $('#myTab a[href="' + activeTab + '"]').tab('show');
     }
   });
+  $(document).ready(() => {
+    let url = location.href.replace(/\/$/, "");
+    if (location.hash) {
+      const hash = url.split("#");
+      $('#myTab a[href="#' + hash[1] + '"]').tab("show");
+      url = location.href.replace(/\/#/, "#");
+          history.replaceState(null, null, url);
+          setTimeout(() => {
+            $(window).scrollTop(0);
+          }, 400);
+        }
+        $('a[data-toggle="tab"]').on("click", function () {
+          let newUrl;
+          const hash = $(this).attr("href");
+          if (hash == "#newenquiry") {
+            newUrl = url.split("#")[0];
+          } else {
+            newUrl = url.split("#")[0] + hash;
+          }
+          newUrl += "/";
+          history.replaceState(null, null, newUrl);
+        });
+      });
 </script>
+

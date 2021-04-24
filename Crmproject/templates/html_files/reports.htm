@@ -1,9 +1,9 @@
 <button type="button" class="btn btn-primary btn-sm btn-block " style="margin-top: -13px; font-size:x-large; font-weight: bolder;">Reports </button>
 <div class="container">
     <hr class="sm-2">
-    <form action="{% url 'reports_genrate' %}"method="GET">
+    <form action="{% url 'reports_genrate' %}" method="GET">
         <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <select class="form-select form-control form-select-lg mb-3" name="filteroption"  required>
                     <option selected>select status</option>
                     <option value="Expected_Purchase_Date">Expected Purchase Date</option>
@@ -11,7 +11,7 @@
                     <option value="Booking_Date">Booking Date</option>
                 </select>
             </div>
-            <div class="col-sm-8">
+            <div class="col-sm-7">
                 <div class="row">
                     <div class="col-sm-5">
                         <input type="date"  class="form-control" name="fromdate" required >
@@ -24,6 +24,10 @@
             </div>
         </div>
     </form>
+    <div class="col-sm-2">
+        <a href="{% url 'csv_Files_export' %}?{{ request.GET.urlencode }}" class="btn btn-primary">Export Data</a>
+    </div>
+   <hr>
 </div>
 <table class="table table-hover table-sm" id="table-coldenq" style="padding: 100px; font-size: small;">
     <thead>
