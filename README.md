@@ -1,6 +1,6 @@
 # Django_Crm
 # For Windows/Mac Users :
-**Installation Instructions for Django
+* Installation Instructions for Django
 Install Python Ensure that you enable checkbox to install pip as well.
 
 Open command prompt, change directory to the folder where you intend to save the project files.
