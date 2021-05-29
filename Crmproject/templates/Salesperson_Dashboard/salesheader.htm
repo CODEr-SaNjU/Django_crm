@@ -8,7 +8,7 @@
                         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                             <ul class="navbar-nav mr-auto">
                                 <li class="nav-item active">
-                                    <a class="nav-link" href="">CRM Name</a>
+                                    <a class="nav-link" href="{% url 'saleperson' %}" >CRM Name</a>
                                 </li>
                             </ul>
                             <span class="navbar-text">
@@ -26,14 +26,11 @@
                                     <button class="btn btn-primary" type="submit">Search</button>
                                 </form>
                             </span>
-                            <span class="navbar-text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                            <span class="navbar-text" >
-                                <div class="from-group">
-                                    <div class="form-group">
-                                        <input class="form-control mr-sm-2" type="text" placeholder="Search Enquiry" aria-label="Search" id="search"
-                                        style="margin-right: 2px;">
-                                    </div>
-                                </div>
+                            <span class="navbar-text">
+                                <form class="form-inline" method="GET" action="{% url 'Enquiry_search' %}" style="font-weight: bolder;">
+                                    <input type="text" class="form-control id="search" name="search" mb-2 mr-sm-2" placeholder="Search Enquiry">
+                                    <button type="submit" class="btn btn-primary mb-1" style="margin-left:5px ;">Submit</button>
+                                </form>
                             </span>
                             <span class="navbar-text">
                                 <a href="#" class="ml-2"><button class="btn  my-2 my-sm-0" type="button">{{request.user}}</a></button>

@@ -12,8 +12,9 @@
   <div class="col-lg-2 col-md-3 d-md-block">
     <div class="card bg-common card-left">
       <div class="card-body">
-        <nav class="nav d-block card-header-tabs nav-fill">
+        <nav class="nav d-block card-header-tabs data-deep-link="true" nav-fill" href="{% url 'saleperson' %}" role="tablist" id="myTab">
           <a data-toggle="tab" class="nav-link text-dark text-center" aria-current="page" href="#enquiry">Enquiry</a>
+          <a data-toggle="tab" class="nav-link text-dark text-center" aria-current="page" href="#Reports">Reports</a>
         </nav>
       </div>
     </div>
@@ -24,10 +25,22 @@
         <div class="tab-pane active" id="enquiry">
           {% include 'Salesperson_Dashboard/salesperson_enq_tab.htm' %}
         </div>
+        <div class="tab-pane fade " id="Reports">
+          {% include 'Salesperson_Dashboard/reports_genrate_excel.htm' %}
+        </div>
       </div>
     </div>
   </div>
 </div>
-
 {% endblock %}
-
+<script>
+  $(document).ready(function () {
+    $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+      localStorage.setItem('activeTab', $(e.target).attr('href'));
+    });
+    var activeTab = localStorage.getItem('activeTab');
+    if (activeTab) {
+      $('#myTab a[href="' + activeTab + '"]').tab('show');
+    }
+  });
+</script>

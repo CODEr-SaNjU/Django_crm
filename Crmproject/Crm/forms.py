@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from .models import Client_Visit
 from django.http import Http404, HttpResponse
 from django.contrib.auth.forms import UserCreationForm
+from django.core.validators import RegexValidator
 
 
 class DateInput(forms.DateInput):
@@ -11,6 +12,12 @@ class DateInput(forms.DateInput):
 
 
 class SalespersonEnquiryForm(forms.ModelForm):
+    Contact_number = forms.CharField(
+        required=True,
+        validators=[RegexValidator(
+            r"^[0-9-]+$", "Enter a valid phone number.")],
+    )
+
     class Meta:
         model = Enquiry
         fields = ['username', 'Contact_number', 'Email', 'Name',
@@ -21,6 +28,12 @@ class SalespersonEnquiryForm(forms.ModelForm):
 
 
 class salespersonUpdateEnquiryForm(forms.ModelForm):
+    Contact_number = forms.CharField(
+        required=True,
+        validators=[RegexValidator(
+            r"^[0-9-]+$", "Enter a valid phone number.")],
+    )
+
     class Meta:
         model = Enquiry
         fields = ['Enquiry_source', 'Profession', 'Machine_Name', 'Visited_status', 'Enquiry_status', 'Follow_up', 'Expected_purchase_Date', 'Delivery_date',
@@ -46,6 +59,12 @@ class salespersonstatusEnquiryForm(forms.ModelForm):
 
 
 class CreateEnquiryForm(forms.ModelForm):
+    Contact_number = forms.CharField(
+        required=True,
+        validators=[RegexValidator(
+            r"^[0-9-]+$", "Enter a valid phone number.")],
+    )
+
     class Meta:
         model = Enquiry
         fields = ['username', 'Contact_number', 'Email', 'Name',
@@ -56,6 +75,12 @@ class CreateEnquiryForm(forms.ModelForm):
 
 
 class UpdateEnquiryForm(forms.ModelForm):
+    Contact_number = forms.CharField(
+        required=True,
+        validators=[RegexValidator(
+            r"^[0-9-]+$", "Enter a valid phone number.")],
+    )
+
     class Meta:
         model = Enquiry
         fields = ['username', 'Enquiry_source', 'Profession', 'Machine_Name', 'Visited_status', 'Enquiry_status', 'Follow_up', 'Expected_purchase_Date', 'Delivery_date',

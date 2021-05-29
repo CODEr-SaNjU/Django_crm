@@ -98,7 +98,6 @@ def Enquiry_search(request):
         qur = request.GET.get('search')
         newfewenq = Enquiry.objects.filter(Q(Name__icontains=qur) | Q(
             Enquiry_number__icontains=qur) | Q(State__icontains=qur))
-        print(newfewenq)
         return render(request, 'html_files/Dashboard.htm', {"newfewenq": newfewenq})
     except:
         return redirect('Admin_panel')
@@ -121,6 +120,7 @@ def Enquiry_search(request):
 
 
 @login_required(login_url='login')
+@admin_only
 def save_enq_form(request, form, template_name):
     data = dict()
     if request.method == 'POST':
@@ -166,6 +166,7 @@ def history_view(request, pk_id):
 
 
 @login_required(login_url='login')
+@admin_only
 def enq_create(request):
     data = dict()
     if request.method == 'POST':
@@ -193,6 +194,7 @@ def enq_create(request):
 
 
 @login_required(login_url="login")
+@admin_only
 def search_query(request):
     try:
         featured_filter = request.GET.get('filteroption')
@@ -216,6 +218,7 @@ def search_query(request):
 
 
 @login_required(login_url="login")
+@admin_only
 def reports_genrate(request):
     query_filter = search_query(request)
     context = {
@@ -224,7 +227,7 @@ def reports_genrate(request):
     return render(request, "html_files/Dashboard.htm", context)
 
 
-@ login_required(login_url='login')
+@login_required(login_url='login')
 def Enquiry_Update(request, pk_id):
     obj_update = get_object_or_404(Enquiry, id=pk_id)
     if request.method == "POST":
@@ -361,7 +364,6 @@ def saleperson_page(request):
             context={
                 "page_obj_cold_enq": page_obj_cold_enq}
         )
-        print("line number 328", html)
         data_dict = {"html_from_view": html}
         return JsonResponse(data=data_dict, safe=False)
 
@@ -548,8 +550,40 @@ def csv_Files_import(request):
         return redirect("Admin_panel")
 
 
+@login_required(login_url="login")
+def salesperson_search_query(request):
+    try:
+        featured_filter = request.GET.get('filteroption')
+        fromdate_value = request.GET.get('fromdate')
+        enddate_value = request.GET.get('enddate')
+        if featured_filter == "Delivery_Date":
+            filterdata = Enquiry.objects.filter(
+                Delivery_date__range=[fromdate_value, enddate_value])
+
+        elif featured_filter == "Expected_Purchase_Date":
+            filterdata = Enquiry.objects.filter(
+                Expected_purchase_Date__range=[fromdate_value, enddate_value])
+
+        elif featured_filter == "Booking_Date":
+            filterdata = Enquiry.objects.filter(
+                Booking_Date__range=[fromdate_value, enddate_value])
+
+        return filterdata
+    except:
+        return redirect('saleperson')
+
+
+@login_required(login_url="login")
+def salesperson_reports_genrate(request):
+    query_filter = salesperson_search_query(request)
+    context = {
+        'filterdata': query_filter
+    }
+    return render(request, "Salesperson_Dashboard/salesperson_dashboard.htm", context)
+
+
 def csv_Files_export(request):
-    filterdata = search_query(request)
+    filterdata = salesperson_search_query(request)
     response = HttpResponse(content_type="text/csv")
     response['Content-Disposition'] = 'attachment; filename=Enquiry' + \
         str(datetime.datetime.now())+'.csv'
@@ -558,7 +592,6 @@ def csv_Files_export(request):
                      'Name', 'Company_name', 'Enquiry_details', 'City', 'State', 'Enquiry_source', 'Machine_Name', 'Delivery_date', 'Expected_purchase_Date', 'Profession', 'Visited_status', 'Enquiry_status', 'Booking_Date', 'Follow_up', 'Remarks', 'Created_at'])
 
     for queryset in filterdata:
-        print(queryset)
         writer.writerow(
             [queryset.Enquiry_number, queryset.Contact_number, queryset.Email, queryset.Name, queryset.Company_name, queryset.Enquiry_details, queryset.City, queryset.State, queryset.Enquiry_source, queryset.Machine_Name, queryset.Delivery_date, queryset.Expected_purchase_Date, queryset.Profession, queryset.Visited_status, queryset.Enquiry_status, queryset.Booking_Date, queryset.Follow_up, queryset.Remarks, queryset.Created_at])
     return response

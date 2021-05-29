@@ -12,7 +12,7 @@ urlpatterns = [
     path("validate_Number", views.validate_Number, name="validate_Number"),
     path("Enquiry_Update/<str:pk_id>/",
          views.Enquiry_Update, name="Enquiry_Update"),
-    path("Enquiry_search/", views.Enquiry_search, name="Enquiry_search"),
+    path("Admin_panel/", views.Enquiry_search, name="Enquiry_search"),
     path("Enquiry_Delete/<str:pk_id>/",
          views.Enquiry_Delete, name="Enquiry_Delete"),
     path("logout/", views.logout, name="logout"),
@@ -33,6 +33,7 @@ urlpatterns = [
     path("salesperson_Enquiry_Update/<str:pk_id>/",
          views.salesperson_Enquiry_Update, name="salesperson_Enquiry_Update"),
     path("csv_Files_export", views.csv_Files_export, name="csv_Files_export"),
-
+    path("salesperson_reports_genrate/",
+         views.salesperson_reports_genrate, name="salesperson_reports_genrate"),
 
 ]

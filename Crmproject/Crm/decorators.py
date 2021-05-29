@@ -18,6 +18,7 @@ def allowed_user(allowed_roles=[]):
             group = None
             if request.user.groups.exists():
                 group = request.user.groups.all()[0].name
+                print("line number at 21 deco", group)
             if group in allowed_roles:
                 return view_func(request, *args, **kwargs)
             else:

@@ -11,8 +11,8 @@ from datetime import timezone
 
 
 STATUS = (
-    (0, "Yes"),
-    (1, "No")
+    ("Yes", "Yes"),
+    ("No", "No")
 )
 
 
@@ -71,7 +71,8 @@ class Enquiry(models.Model):
         verbose_name='Expected Purchase Date', auto_now_add=False, blank=True, null=True)
     Profession = models.ForeignKey(
         Profession, on_delete=models.CASCADE, null=True, blank=True)
-    Visited_status = models.IntegerField(choices=STATUS, default=1)
+    Visited_status = models.CharField(
+        max_length=20, choices=STATUS, default="Yes")
     VisitStatusDefaultValue = Client_Visit.objects.get(Enquiry_status="COLD")
     VisitStatusDefaultValueId = VisitStatusDefaultValue.id
     Enquiry_status = models.ForeignKey(
